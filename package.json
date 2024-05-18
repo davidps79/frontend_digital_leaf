@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tabler/icons-react": "^3.4.0",
+    "@tailwindcss/typography": "^0.5.13",
+    "axios": "^1.6.8",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-reader": "^2.0.10"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
