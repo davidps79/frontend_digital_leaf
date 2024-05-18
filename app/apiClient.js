@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const apiClient = axios.create({ 
     baseURL: 'http://localhost:3001/', 
-    timeout: 1000,
     headers: {'Content-Type': 'application/json'}
 });
 
@@ -15,6 +14,7 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error("Error",error);
     return Promise.reject(error);
   }
 );
