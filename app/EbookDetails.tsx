@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { IconShoppingBagPlus, IconBookmark, IconStar, IconStarFilled } from '@tabler/icons-react';
 import { InfoEbook } from '@/lib/ebook';
 import Link from 'next/link';
-import apiClient from '@/app/apiClient';
+import apiClient from '@/app/API/apiClient';
 
 const EbookDetails = ({ ebookId }: { ebookId: string }) => {
     const [ebook, setEbook] = useState<InfoEbook|null>(null);
@@ -62,7 +62,7 @@ const EbookDetails = ({ ebookId }: { ebookId: string }) => {
                         {ebook.overview}
                     </p>
 
-                    <Link href="viewer" className='underline underline-offset-1 font-semibold'>
+                    <Link href={`/viewer/${ebook.fileUrl}`} className='underline underline-offset-1 font-semibold'>
                         Ver páginas de muestra
                     </Link>
                 </div>

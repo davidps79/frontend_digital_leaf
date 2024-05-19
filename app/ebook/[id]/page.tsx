@@ -1,7 +1,7 @@
 import React from 'react'
 import Link from 'next/link';
 import EbookCard from '../../EbookCard';
-import EbookDetails from '@/app/EbookCover';
+import EbookDetails from '@/app/EbookDetails';
 
 const page = ({params} : {params: any}) => {
     return (

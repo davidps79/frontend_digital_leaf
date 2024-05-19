@@ -7,7 +7,7 @@ export async function downloadEbook(filePath){
     .download(`${filePath}`);
 
     if(error){
-        console.log('Error al obtener el pdf ', error)
+        console.log('Error al obtener el epub ', error)
         return null;
     }
 
