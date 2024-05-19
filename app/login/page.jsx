@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { login } from '../api';
+import { login } from '../API/api';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');

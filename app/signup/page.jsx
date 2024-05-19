@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { register } from '../api';
+import { register } from '../API/api';
 
 export default function RegisterPage() {
   const [userType, setUserType] = useState('Reader');

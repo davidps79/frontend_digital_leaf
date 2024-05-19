@@ -54,3 +54,12 @@ export const updateUser = async (id, updateData) => {
     throw new Error(error.response?.data?.message || 'Error al actualizar el perfil del usuario');
   }
 };
+
+export const addEbook = async (ebookData) => {
+  try {
+    const response = await apiClient.post('/ebooks', ebookData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al añadir un nuevo ebook');
+  }
+}
