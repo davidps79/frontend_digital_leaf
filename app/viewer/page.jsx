@@ -3,7 +3,7 @@ import EpubReader from '../EpubReader';
 
 const Page = () => {
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-[80vh]">
             <EpubReader />
         </div>
     )

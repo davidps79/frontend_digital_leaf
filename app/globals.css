@@ -2,9 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body {
+    height: auto;
+}
+
 .btn-primary {
     @apply
-    px-3.5 py-2.5 bg-black font-semibold w-full justify-between items-center text-white flex gap-2
+    rounded-none px-3.5 py-2.5 bg-black font-semibold w-full justify-between items-center text-white flex gap-2
 }
 
 .btn-secondary {
