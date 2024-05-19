@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {jwtDecode} from 'jwt-decode';
-import { getUserById, getAuthorProfile, getReaderProfile, updateUser } from '../api';
+import { getUserById, getAuthorProfile, getReaderProfile, updateUser } from '../API/api';
 import { IconUser, IconBook, IconAt, IconEdit } from '@tabler/icons-react';
 
 export default function ProfilePage() {
@@ -267,6 +267,12 @@ export default function ProfilePage() {
                     </ul>
                   </div>
                 )}
+                <button
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={() => router.push('/addEbook')}
+                >
+                  Create New Ebook
+                </button>
               </>
             )}
             <button
