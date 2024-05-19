@@ -18,3 +18,39 @@ export const register = async (userData) => {
     throw new Error(error.response?.data?.message || 'Error en el registro');
   }
 };
+
+export const getUserById = async (id) => {
+  try {
+    const response = await apiClient.get(`auth/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el perfil del usuario');
+  }
+};
+
+export const getAuthorProfile = async (id) => {
+  try {
+    const response = await apiClient.get(`auth/author/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el perfil del autor');
+  }
+};
+
+export const getReaderProfile = async (id) => {
+  try {
+    const response = await apiClient.get(`auth/reader/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el perfil del lector');
+  }
+};
+
+export const updateUser = async (id, updateData) => {
+  try {
+    const response = await apiClient.patch(`/auth/${id}`, updateData);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al actualizar el perfil del usuario');
+  }
+};

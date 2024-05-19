@@ -54,7 +54,8 @@ export default function RegisterPage() {
         penName: formData.penName,
         biography: formData.biography,
       });
-      localStorage.setItem('token', data.accessToken);
+      console.log(data);
+      localStorage.setItem('token', data.access_token);
       router.push('/ebook');
     } catch (error) {
       setError(error.message);
@@ -151,7 +152,6 @@ export default function RegisterPage() {
                   <option value="Mystery">Mystery</option>
                   <option value="Romance">Romance</option>
                   <option value="Horror">Horror</option>
-                  {/* Añade más opciones según sea necesario */}
                 </select>
               </div>
             )}
