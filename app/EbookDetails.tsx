@@ -5,25 +5,42 @@ import { IconShoppingBagPlus, IconBookmark, IconStar, IconStarFilled } from '@ta
 import { InfoEbook } from '@/lib/ebook';
 import Link from 'next/link';
 import apiClient from '@/app/API/apiClient';
+import { downloadEbookCover } from './crudImageEbook/downloadEbookCover';
+import Image from 'next/image'
 
 const EbookDetails = ({ ebookId }: { ebookId: string }) => {
     const [ebook, setEbook] = useState<InfoEbook|null>(null);
+    const [filePath, setFilePath] = useState("");
 
     useEffect(() => {
         const fetchEbook = async () => {
             const res = await apiClient.get("ebooks/info/" + ebookId);
+            console.log(res.data);
             setEbook(res.data);
         }
 
         fetchEbook();
     }, [])
 
+    useEffect(() => {
+        async function fetchImage() {
+            if (ebook) {
+                downloadEbookCover(ebook.ebookCover).then((value) => {
+                    if (value) {
+                        setFilePath(URL.createObjectURL(value));
+                    }
+                });
+            }
+        }
+        fetchImage();
+    }, [ebook]);
+
     if (!ebook) return <>...</>
 
     return (
         <>
             <div className='max-h-[80vh] h-full bg-neutral-100 p-2 flex items-center justify-center'>
-                <img src="/cover.jpeg" className='max-h-[80%]'></img>
+                <Image alt={ebook.title} className='max-h-[80%]' width={0} height={0} src={filePath} />
             </div>
 
             <div className="ml-12 flex flex-col gap-8">
@@ -87,6 +104,11 @@ const EbookDetails = ({ ebookId }: { ebookId: string }) => {
                     <div className='flex flex-col'>
                         <h5 className='text-sm font-semibold'># Edición</h5>
                         <p>{ebook.version}</p>
+                    </div>
+
+                    <div className='flex flex-col'>
+                        <h5 className='text-sm font-semibold'>Categoría</h5>
+                        <p>{ebook.category}</p>
                     </div>
                 </div>
             </div>

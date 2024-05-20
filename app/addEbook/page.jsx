@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 import { addEbook } from '../API/api';
 import { uploadEbook } from '@/crudEbok/uploadEbook';
+import { uploadEbookCover } from '../crudImageEbook/uploadEbookCover';
 
 export default function CreateEbookPage() {
   const [formData, setFormData] = useState({
@@ -16,13 +17,15 @@ export default function CreateEbookPage() {
     isbn: '',
     version: '',
     rating: '',
+    category: '',
+    ebookCover: '',
   });
   const [error, setError] = useState('');
   const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    if (name === 'fileData') {
+    if (name === 'fileData' || name === 'ebookCover') {
       setFormData({
         ...formData,
         [name]: files[0],
@@ -44,6 +47,8 @@ export default function CreateEbookPage() {
 
       const dataEbook = await uploadEbook(formData.title, formData.fileData);
 
+      const dataCover = await uploadEbookCover(formData.ebookCover);
+
       const ebookData = {
         title: formData.title,
         publisher: formData.publisher,
@@ -55,6 +60,8 @@ export default function CreateEbookPage() {
         isbn: formData.isbn,
         version: formData.version,
         rating: 0,
+        category: formData.category,
+        ebookCover:dataCover.path,
       };
       
       console.log(ebookData);
@@ -168,6 +175,37 @@ export default function CreateEbookPage() {
                 required
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 value={formData.version}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
+              <select
+                id="category"
+                name="category"
+                required
+                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                <option value="">Select a category</option>
+                <option value="Fantasia">Fantasia</option>
+                <option value="Comedia">Comedia</option>
+                <option value="Horror">Horror</option>
+                <option value="Historia">Historia</option>
+                <option value="Ciencia Ficcion">Ciencia Ficcion</option>
+                <option value="Romance">Romance</option>
+                <option value="Misterio">Misterio</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="ebookCover" className="block text-sm font-medium text-gray-700">eBook Cover</label>
+              <input
+                id="ebookCover"
+                name="ebookCover"
+                type="file"
+                required
+                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                 onChange={handleChange}
               />
             </div>

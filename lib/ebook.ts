@@ -9,4 +9,6 @@ export type InfoEbook = {
     isbn: string;
     version: string;
     rating: number;
+    category:string;
+    ebookCover:string;
 }
