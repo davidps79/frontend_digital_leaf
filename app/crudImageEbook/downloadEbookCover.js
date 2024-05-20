@@ -10,6 +10,6 @@ export async function downloadEbookCover(imagePath){
         console.log('Error al obtener la imagen ', error)
         return null;
     }
-
+    console.log(data);
     return data;
 }

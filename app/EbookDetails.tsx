@@ -39,10 +39,13 @@ const EbookDetails = ({ ebookId }: { ebookId: string }) => {
 
     return (
         <>
+        { !filePath?
+            <div className='w-full h-full rounded-t-lg bg-neutral-300 animate-pulse' />
+            :
             <div className='max-h-[80vh] h-full bg-neutral-100 p-2 flex items-center justify-center'>
-                <Image alt={ebook.title} className='max-h-[80%]' width={0} height={0} src={filePath} />
+                <Image alt={ebook.title} className='max-h-[80%]' width={400} height={600} src={filePath} />
             </div>
-
+        }   
             <div className="ml-12 flex flex-col gap-8">
                 <div>
                     <h2 className='text-2xl font-bold'>
