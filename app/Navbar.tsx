@@ -1,6 +1,8 @@
+'use client';
 import React from 'react'
 import Image from 'next/image'
-import { IconShoppingBag, IconUser, IconBookmarks, IconSearch } from '@tabler/icons-react'
+import { IconShoppingBag, IconUser, IconBookmarks, IconSearch, IconFilter, IconShoppingCart } from '@tabler/icons-react'
+import FilterMenu from './FilterMenu'
 
 const Navbar = () => {
     return (
@@ -15,11 +17,14 @@ const Navbar = () => {
                 </ul>
             </div>
 
-            <IconSearch/>
-
+            <div className='flex gap-2 items-center'>
+                <input type="text" placeholder=" Buscar" className="rounded-full w-[500px] border-gray-400 mr-2" ></input>
+                <IconSearch/>
+                <FilterMenu />
+            </div>
             <div className='flex gap-4 items-center'>
                 <IconBookmarks />
-                <IconShoppingBag />
+                <IconShoppingCart />
                 <IconUser />
             </div>
         </div>
