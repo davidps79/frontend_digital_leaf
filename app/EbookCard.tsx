@@ -31,7 +31,7 @@ const EbookCard = ({ book }: { book: Book }) => {
                 </h3>
 
                 <h4 className='text-neutral-600'>
-                    {book.author.name}
+                    {book.author.penName}
                 </h4>
 
                 <h3 className='font-semibold mt-2'>

@@ -24,7 +24,7 @@ const BookList: React.FC<BookListProps> = ({ books }) => {
           <div className="text-gray-500">Rating: {book.rating}</div>
           </div>
           
-          <p className="text-gray-700">{book.author.name}</p>
+          <p className="text-gray-700">{book.author.penName}</p>
           <p className="text-gray-500">{book.publisher}</p>
           <p className="text-gray-500">{book.category}</p>
           <p className="text-gray-700">{book.overview}</p>

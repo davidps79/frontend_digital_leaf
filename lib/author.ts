@@ -1,4 +1,4 @@
 export type Author = {
-    name: string;
+    penName: string;
   }
   
