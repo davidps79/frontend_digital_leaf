@@ -1,23 +1,7 @@
 'use client'; 
 import React from 'react';
-
-interface Author {
-  name: string;
-}
-
-interface Book {
-  id: string;
-  title: string;
-  publisher: string;
-  author: Author;
-  overview: string;
-  price: number;
-  stock: number;
-  isbn: string;
-  rating: number;
-  category: string;
-  ebookCover: string;
-}
+import { Book } from '@/lib/book';
+import Image from 'next/image';
 
 interface BookListProps {
   books: Book[];
@@ -32,7 +16,7 @@ const BookList: React.FC<BookListProps> = ({ books }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {books.map((book) => (
         <div key={book.id} className="p-4 border rounded shadow-sm">
-          <img src={book.ebookCover} alt={`${book.title} cover`} className="w-full h-48 object-cover mb-4 rounded" />
+          <Image alt={`${book.title} cover`} className="w-full h-48 object-cover mb-4 rounded"  width={0} height={0} src={book.ebookCover} />
           <h3 className="text-xl font-bold">{book.title}</h3>
           
           <div className="flex justify-between">

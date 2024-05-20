@@ -2,24 +2,8 @@
 import { useState, useEffect } from 'react';
 import BookList from '../BookList';
 import { getBooks } from '../API/api';
-
-interface Author {
-  name: string;
-}
-
-interface Book {
-  id: string;
-  title: string;
-  publisher: string;
-  author: Author;
-  overview: string;
-  price: number;
-  stock: number;
-  isbn: string;
-  rating: number;
-  category: string;
-  ebookCover: string;
-}
+import { Book } from '@/lib/book';
+import EbookCard from '../EbookCard';
 
 export default function HomePage() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -49,7 +33,11 @@ export default function HomePage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-8">Digital Library</h1>
-      <BookList books={books} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {books.map((book) => (
+        <EbookCard book={book}></EbookCard>
+      ))}
+    </div>
     </div>
   );
 }
