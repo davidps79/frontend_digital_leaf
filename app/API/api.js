@@ -63,3 +63,12 @@ export const addEbook = async (ebookData) => {
     throw new Error(error.response?.data?.message || 'Error al añadir un nuevo ebook');
   }
 }
+
+export const getBooks = async () => {
+  try {
+    const response = await apiClient.get('/ebooks');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros');
+  }
+};
