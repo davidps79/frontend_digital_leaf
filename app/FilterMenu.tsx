@@ -1,3 +1,4 @@
+'use client'; 
 import React, { useState } from 'react';
 import { IconFilter } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
