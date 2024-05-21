@@ -8,19 +8,8 @@ import apiClient from '@/app/API/apiClient';
 import { downloadEbookCover } from './crudImageEbook/downloadEbookCover';
 import Image from 'next/image'
 
-const EbookDetails = ({ ebookId }: { ebookId: string }) => {
-    const [ebook, setEbook] = useState<InfoEbook|null>(null);
+const EbookDetails = ({ ebook }: { ebook: InfoEbook }) => {
     const [filePath, setFilePath] = useState("");
-
-    useEffect(() => {
-        const fetchEbook = async () => {
-            const res = await apiClient.get("ebooks/info/" + ebookId);
-            console.log(res.data);
-            setEbook(res.data);
-        }
-
-        fetchEbook();
-    }, [])
 
     useEffect(() => {
         async function fetchImage() {

@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import EbookCard from '../../EbookCard';
 import EbookDetails from '@/app/EbookDetails';
-import { getBooks } from '../../API/api';
+import { getBookById, getBooks, getBooksByAuthorAmount, getBooksByCategoryAmount, getBooksInfo } from '../../API/api';
 import { Book } from '@/lib/book';
+import { InfoEbook } from '@/lib/ebook';
 
 interface PageProps {
   params: {
@@ -13,20 +14,21 @@ interface PageProps {
   };
 }
 
-const getRandomBooks = (books: Book[], num: number): Book[] => {
-  const shuffled = [...books].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, num);
-};
-
 const Page: React.FC<PageProps> = ({ params }) => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [booksAuthor, setBooksAuthor] = useState<Book[]>([]);
+  const [booksCategory, setBooksCategory] = useState<Book[]>([]);
+  const [authorId,setAuthorId] = useState("");
+  const [category,setCategory] = useState("");
   const [error, setError] = useState<string>('');
+  const [ebook,setEbook] = useState<InfoEbook>();
+  const idBook = params.id;
 
   useEffect(() => {
-    const fetchBooks = async () => {
+
+    const fetchBooksAuthor = async () => {
       try {
-        const booksData = await getBooks();
-        setBooks(booksData);
+        const booksData = await getBooksByAuthorAmount(4,authorId);
+        setBooksAuthor(booksData);
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -36,23 +38,54 @@ const Page: React.FC<PageProps> = ({ params }) => {
       }
     };
 
-    fetchBooks();
-  }, []);
+    const fetchBooksCategory = async () => {
+      try {
+        const booksData = await getBooksByCategoryAmount(4,category);
+        setBooksCategory(booksData);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+      }
+    };
 
-  const randomBooks = getRandomBooks(books, 4);
+      const fetchEbook = async () => {
+        const book:Book = await getBookById(idBook);
+        if(book){
+          setCategory(book.category);
+          setAuthorId(book.author.id);
+        }
+
+    }
+
+    const fetchEbookInfo = async () => {
+      const book = await getBooksInfo(idBook);
+      if(book){
+        setEbook(book);
+      }
+
+  }
+
+    fetchBooksAuthor();
+    fetchBooksCategory();
+    fetchEbook();
+    fetchEbookInfo();
+  }, [authorId,category,idBook]);
 
   return (
     <div className='h-fit grid grid-cols-2 gap-x-4 gap-y-16'>
-      <EbookDetails ebookId={params.id} />
+      {ebook && <EbookDetails ebook={ebook} />}
 
       <div className='space-y-6 col-span-2'>
         <div className='flex w-full justify-between'>
-          <h2 className='font-bold text-xl'>Más libros de J.R.R Tolkien</h2>
+          <h2 className='font-bold text-xl'>Más libros de {ebook?.author}</h2>
           <Link href='' className='underline underline-offset-1 font-semibold'>ver todos</Link>
         </div>
 
         <div className='grid grid-cols-4 gap-4'>
-          {randomBooks.map((book) => (
+          {booksAuthor.map((book) => (
             <EbookCard key={book.id} book={book} />
           ))}
         </div>
@@ -60,11 +93,11 @@ const Page: React.FC<PageProps> = ({ params }) => {
 
       <div className='space-y-6 col-span-2'>
         <div className='flex w-full justify-between'>
-          <h2 className='font-bold text-xl'>Más libros de fantasía</h2>
+          <h2 className='font-bold text-xl'>Más libros de {category}</h2>
           <Link href='' className='underline underline-offset-1 font-semibold'>ver todos</Link>
         </div>
         <div className='grid grid-cols-4 gap-4'>
-          {randomBooks.map((book) => (
+          {booksCategory.map((book) => (
             <EbookCard key={book.id} book={book} />
           ))}
         </div>

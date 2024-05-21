@@ -1,10 +1,8 @@
 'use client'; 
 import { useState, useEffect } from 'react';
-import BookList from '../BookList';
 import { getBooks } from '../API/api';
 import { Book } from '@/lib/book';
 import EbookCard from '../EbookCard';
-import Link from 'next/link';
 
 export default function HomePage() {
   const [books, setBooks] = useState<Book[]>([]);
