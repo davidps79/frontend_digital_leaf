@@ -1,40 +1,15 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { IconShoppingBagPlus, IconBookmark, IconStar, IconStarFilled } from '@tabler/icons-react';
-import { InfoEbook } from '@/lib/ebook';
+import { InfoEbookDto } from '@/lib/ebook';
 import Link from 'next/link';
-import apiClient from '@/app/API/apiClient';
-import { downloadEbookCover } from './crudImageEbook/downloadEbookCover';
-import Image from 'next/image'
+import EbookCover from './EbookCover';
 
-const EbookDetails = ({ ebook }: { ebook: InfoEbook }) => {
-    const [filePath, setFilePath] = useState("");
-
-    useEffect(() => {
-        async function fetchImage() {
-            if (ebook) {
-                downloadEbookCover(ebook.ebookCover).then((value) => {
-                    if (value) {
-                        setFilePath(URL.createObjectURL(value));
-                    }
-                });
-            }
-        }
-        fetchImage();
-    }, [ebook]);
-
-    if (!ebook) return <>...</>
-
+const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
     return (
         <>
-        { !filePath?
-            <div className='w-full h-full rounded-t-lg bg-neutral-300 animate-pulse' />
-            :
-            <div className='max-h-[80vh] h-full bg-neutral-100 p-2 flex items-center justify-center'>
-                <Image alt={ebook.title} className='max-h-[80%]' width={400} height={600} src={filePath} />
-            </div>
-        }   
+            <EbookCover coverUrl={ebook.ebookCover} />
             <div className="ml-12 flex flex-col gap-8">
                 <div>
                     <h2 className='text-2xl font-bold'>
@@ -42,7 +17,7 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbook }) => {
                     </h2>
 
                     <h4 className='text-lg'>
-                        por <strong className='font-semibold'>{ebook.author}</strong>
+                        por <strong className='font-semibold'>{ebook.author.name}</strong>
                     </h4>
                 </div>
 

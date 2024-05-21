@@ -1,7 +1,7 @@
-export type InfoEbook = {
+export type InfoEbookDto = {
     title: string;
     publisher: string;
-    author: string;
+    author: Author;
     overview: string;
     price: number;
     stock: number;
@@ -11,4 +11,9 @@ export type InfoEbook = {
     rating: number;
     category:string;
     ebookCover:string;
+}
+
+export type Author = {
+    id: string;
+    name: string;
 }
