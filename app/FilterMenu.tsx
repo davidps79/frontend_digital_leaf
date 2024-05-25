@@ -12,7 +12,7 @@ const FilterMenu: React.FC = () => {
   };
 
   const handleOptionClick = (value: string) => {
-    router.push(`/category/${value}`);
+    router.push(`/filter/category/${value}`);
   };
 
   return (

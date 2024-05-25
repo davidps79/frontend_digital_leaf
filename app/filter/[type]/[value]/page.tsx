@@ -1,21 +1,27 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import EbookCard from '../../EbookCard';
+import EbookCard from '../../../EbookCard';
 import { Book } from '@/lib/book';
-import { getBooksBySearch } from '@/app/API/api';
+import { getBooksByCategory, getBooksBySearch } from '@/app/API/api';
 
-const SearchPage = ({ params }: { params: { value: string } }) => {
+const FilterPage = ({ params }: { params: { type: string, value: string } }) => {
   const router = useRouter();
-  const keyword  = params.value;
-  console.log("Keyword: ",keyword);
+  const { type, value } = params;
+  console.log("Filter Type: ", type);
+  console.log("Filter Value: ", value);
   const [books, setBooks] = useState<Book[]>([]);
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    const fetchBooksByCategory = async () => {
+    const fetchBooks = async () => {
       try {
-        const booksData = await getBooksBySearch(keyword);
+        let booksData: Book[] = [];
+        if (type === 'category') {
+          booksData = await getBooksByCategory(value);
+        } else if (type === 'search') {
+          booksData = await getBooksBySearch(value);
+        }
         setBooks(booksData);
       } catch (err) {
         if (err instanceof Error) {
@@ -26,10 +32,10 @@ const SearchPage = ({ params }: { params: { value: string } }) => {
       }
     };
 
-    if (keyword) {
-      fetchBooksByCategory();
+    if (type && value) {
+      fetchBooks();
     }
-  }, [keyword]);
+  }, [type, value]);
 
   if (error) {
     return <div className="text-center text-red-500">{error}</div>;
@@ -37,14 +43,14 @@ const SearchPage = ({ params }: { params: { value: string } }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Results of {keyword}</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">Results for {type}: {value}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {books.map((book) => (
-          <EbookCard book={book} />
+          <EbookCard key={book.id} book={book} />
         ))}
       </div>
     </div>
   );
 };
 
-export default SearchPage;
+export default FilterPage;
