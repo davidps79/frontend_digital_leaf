@@ -12,7 +12,7 @@ const FilterMenu: React.FC = () => {
   };
 
   const handleOptionClick = (value: string) => {
-    router.push(`/category/${value}`);
+    router.push(`/filter/category/${value}`);
   };
 
   return (
@@ -30,13 +30,15 @@ const FilterMenu: React.FC = () => {
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-            <button onClick={() => handleOptionClick('Fantasia')} className="block px-4 py-2 text-sm text-gray-700">Fantasia</button>
+            <button onClick={() => handleOptionClick('Fantasía')} className="block px-4 py-2 text-sm text-gray-700">Fantasia</button>
             <button onClick={() => handleOptionClick('Comedia')} className="block px-4 py-2 text-sm text-gray-700">Comedia</button>
-            <button onClick={() => handleOptionClick('Ciencia Ficcion')} className="block px-4 py-2 text-sm text-gray-700">Ciencia Ficcion</button>
+            <button onClick={() => handleOptionClick('Cuentos clásicos')} className="block px-4 py-2 text-sm text-gray-700">Cuentos Clásicos</button>
+            <button onClick={() => handleOptionClick('Ciencia ficción')} className="block px-4 py-2 text-sm text-gray-700">Ciencia Ficcion</button>
             <button onClick={() => handleOptionClick('Historia')} className="block px-4 py-2 text-sm text-gray-700">Historia</button>
             <button onClick={() => handleOptionClick('Misterio')} className="block px-4 py-2 text-sm text-gray-700">Misterio</button>
             <button onClick={() => handleOptionClick('Romance')} className="block px-4 py-2 text-sm text-gray-700">Romance</button>
             <button onClick={() => handleOptionClick('Horror')} className="block px-4 py-2 text-sm text-gray-700">Horror</button>
+            <button onClick={() => handleOptionClick('Thriller')} className="block px-4 py-2 text-sm text-gray-700">Thriller</button>
           </div>
         </div>
       )}

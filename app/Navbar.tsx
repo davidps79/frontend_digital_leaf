@@ -14,7 +14,7 @@ const Navbar = () => {
 
     const handleSearchClick = () => {
         if (search) {
-            router.push(`/search/${search}`);
+            router.push(`/filter/search/${search}`);
         }
     };
 
