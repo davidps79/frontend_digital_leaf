@@ -141,3 +141,12 @@ export const getBooksByCategoryAmount = async (amount,category) => {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por la categoria',category, " con cantidad :",amount);
   }
 }
+
+export const getBooksByRating = async (rating) => {
+  try{
+    const response = await apiClient.get(`ebooks/sorted/${rating}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por rating',rating);
+  }
+}

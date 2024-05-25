@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import EbookCard from '../../../EbookCard';
 import { Book } from '@/lib/book';
-import { getBooksByAuthor, getBooksByCategory, getBooksBySearch } from '@/app/API/api';
+import { getBooksByAuthor, getBooksByCategory, getBooksByRating, getBooksBySearch } from '@/app/API/api';
 
 const FilterPage = ({ params }: { params: { type: string, value: string } }) => {
   const router = useRouter();
@@ -14,6 +14,7 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
   const [error, setError] = useState<string>('');
   const [authorName, setAuthorName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
+  const [rate, setRate] = useState<string>('');
 
 
   useEffect(() => {
@@ -34,6 +35,13 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
             setAuthorName(booksData[0].author.penName);
           }
           console.log("Author: ",value);
+        } else if (type == 'rating') {
+          booksData = await getBooksByRating(value);
+          if(value=='ASC'){
+            setRate("Ascendent")
+          }else{
+            setRate("Descendent")
+          }
         }
         setBooks(booksData);
       } catch (err) {
@@ -70,6 +78,8 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
           <h1 className="text-3xl font-bold text-center mb-8">Results for {type}: {authorName}</h1>
         ) : type === 'category' ? (
           <h1 className="text-3xl font-bold text-center mb-8">Results for {type}: {category}</h1>
+        ) : type === 'rating' ? (
+          <h1 className="text-3xl font-bold text-center mb-8">Results for {type}: {rate}</h1>
         ) : (
           <h1 className="text-3xl font-bold text-center mb-8">Results for {type}: {value}</h1>
         )
