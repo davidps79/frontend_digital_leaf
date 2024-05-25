@@ -15,7 +15,7 @@ export default function LoginPage() {
       const data = await login(email, password);
       localStorage.setItem('token', data.access_token);
       console.log(localStorage.getItem('token'));
-      router.push('/ebooks');
+      router.push('/');
     } catch (error) {
       console.error('Error details:', error); 
       setError(error.message);

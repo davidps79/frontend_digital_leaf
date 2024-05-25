@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { IconShoppingBag, IconUser, IconBookmarks, IconSearch, IconFilter, IconShoppingCart } from '@tabler/icons-react'
@@ -13,7 +14,7 @@ const Navbar = () => {
 
     const handleSearchClick = () => {
         if (search) {
-            router.push(`/search/${search}`);
+            router.push(`/filter/search/${search}`);
         }
     };
 

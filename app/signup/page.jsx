@@ -56,7 +56,7 @@ export default function RegisterPage() {
       });
       console.log(data);
       localStorage.setItem('token', data.access_token);
-      router.push('/ebooks');
+      router.push('/');
     } catch (error) {
       setError(error.message);
     }
