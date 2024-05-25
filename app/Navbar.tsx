@@ -23,7 +23,7 @@ const Navbar = () => {
         <div className="w-full h-16  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
             <div className='flex gap-10 items-center'>
                 
-                <Link href="/ebooks" passHref>
+                <Link href="/" passHref>
                     <div>
                         <button
                         type="button"

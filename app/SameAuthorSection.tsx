@@ -26,7 +26,7 @@ const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
         <div className='space-y-6 col-span-2'>
             <div className='flex w-full justify-between'>
                 <h2 className='font-bold text-xl'>Más libros de {author.name}</h2>
-                <Link href='' className='underline underline-offset-1 font-semibold'>ver todos</Link>
+                <Link href={`/filter/author/${author.id}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
             </div>
             {
 
