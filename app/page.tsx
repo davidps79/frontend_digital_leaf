@@ -16,6 +16,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
+        setBooks(null);
         const booksData = await getBooks(currentPage, booksPerPage);
         const totalBooks = await getNumberBooks();
         setBooks(booksData);
@@ -62,4 +63,5 @@ export default function HomePage() {
     </div>
   );
 }
+
 
