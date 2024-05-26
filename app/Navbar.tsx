@@ -38,7 +38,7 @@ const Navbar = () => {
 
                 <ul className='flex gap-8'>
                     <li>Categorías</li>
-                    <li>Colección selecta</li>
+                    <li><button onClick={() => router.push('/filter/rating/DESC')}>Colección selecta</button></li>
                     <li>Recién llegados</li>
                 </ul>
             </div>

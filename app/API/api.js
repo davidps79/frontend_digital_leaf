@@ -64,12 +64,21 @@ export const addEbook = async (ebookData) => {
   }
 }
 
-export const getBooks = async () => {
+export const getBooks = async (page,limit) => {
   try {
-    const response = await apiClient.get('ebooks');
+    const response = await apiClient.get(`ebooks?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros');
+  }
+};
+
+export const getNumberBooks = async () => {
+  try {
+    const response = await apiClient.get('ebooks/amount');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el numero los libros');
   }
 };
 
