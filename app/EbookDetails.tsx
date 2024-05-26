@@ -1,10 +1,13 @@
 'use client'
 
 import React from 'react'
-import { IconShoppingBagPlus, IconBookmark, IconStar, IconStarFilled } from '@tabler/icons-react';
+import { IconBookmark, IconStar, IconStarFilled } from '@tabler/icons-react';
 import { InfoEbookDto } from '@/lib/ebook';
-import Link from 'next/link';
 import EbookCover from './EbookCover';
+import CartButton from './CartButton';
+import { Button } from '@/components/ui/button';
+import { formatCurrency } from '@/lib/utils';
+
 
 const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
     return (
@@ -21,20 +24,22 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                     </h4>
                 </div>
 
-                <div className="flex flex-col gap-4 mb-8">
+                <div className="flex flex-col gap-4 mb-6">
                     <h3 className="font-semibold text-xl">
-                        ${ebook.price}
+                        ${formatCurrency(ebook.price)}
                     </h3>
 
-                    <div className="flex gap-2">
-                        <button className="btn-primary">
-                            Añadir al carrito
-                            <IconShoppingBagPlus />
-                        </button>
+                    <div className="flex flex-col gap-2 w-full">
+                        <div className="flex gap-2 w-full">
+                            <CartButton ebook={ebook} />
+                            <Button variant="secondary" size="lg">
+                                <IconBookmark />
+                            </Button>
+                        </div>
 
-                        <button className='btn-secondary'>
-                            <IconBookmark />
-                        </button>
+                        <Button variant="outline">
+                            Ver páginas de muestra
+                        </Button>
                     </div>
                 </div>
 
@@ -42,13 +47,13 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                     <h4 className='text-lg font-semibold'>
                         Vistazo general
                     </h4>
-                    <p className='overflow-ellipsis line-clamp-6'>
+                    <p className='overflow-ellipsis line-clamp-4'>
                         {ebook.overview}
                     </p>
 
-                    <Link href={`/viewer/${ebook.fileUrl}`} className='underline underline-offset-1 font-semibold'>
-                        Ver páginas de muestra
-                    </Link>
+                    <button className='w-fit underline underline-offset-1 font-semibold'>
+                        Ver más
+                    </button>
                 </div>
 
                 <div className='flex gap-2 text-amber-400 mb-8'>
@@ -62,7 +67,7 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                     </p>
                 </div>
 
-                <div className='bg-neutral-100 p-6 grid grid-cols-2'>
+                <div className='bg-neutral-100 space-y-1 p-6 grid grid-cols-2'>
                     <div className='flex flex-col'>
                         <h5 className='text-sm font-semibold'>ISBN</h5>
                         <p>{ebook.isbn}</p>

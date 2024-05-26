@@ -6,13 +6,22 @@ import { Book } from '@/lib/book';
 import EbookCardLoader from './EbookCardLoader';
 import { AuthorInfoDto } from '@/lib/author';
 
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
+
+
 const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
-    const [books, setBooks] = useState<Book[]>([]);
+    const [books, setBooks] = useState<Book[] | null>(null);
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const booksData = await getBooksByAuthorAmount(4, author.id);
+                const booksData = await getBooksByAuthorAmount(6, author.id);
                 setBooks(booksData);
             } catch (err) {
                 console.log(err);
@@ -26,22 +35,32 @@ const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
         <div className='space-y-6 col-span-2'>
             <div className='flex w-full justify-between'>
                 <h2 className='font-bold text-xl'>Más libros de {author.name}</h2>
-                <Link href='' className='underline underline-offset-1 font-semibold'>ver todos</Link>
+                <Link href={`/filter/author/${author.id}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
             </div>
-            {
 
-                <div className='grid grid-cols-4 gap-4'>
-                    {
-                        books.length > 0 ?
-                            books.map((book) => (
-                                <EbookCard key={book.id} book={book} />
-                            ))
-                            :
-                            Array(4).fill(0).map((_) => <EbookCardLoader />)
-                    }
-                </div>
+            {
+                books ?
+                    <Carousel opts={{
+                        align: 'start',
+                        dragFree: true,
+                        watchDrag: false,
+                    }}>
+                        <CarouselContent >
+                            {
+                                books.map((book) => (
+                                    <CarouselItem className='basis-1/4'>
+                                        <EbookCard key={book.id} book={book} />
+                                    </CarouselItem>
+                                ))
+                            }
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                    </Carousel>
+                    :
+                    Array(4).fill(0).map((_) => <EbookCardLoader />)
             }
-        </div>
+        </div >
     )
 }
 

@@ -64,12 +64,21 @@ export const addEbook = async (ebookData) => {
   }
 }
 
-export const getBooks = async () => {
+export const getBooks = async (page,limit) => {
   try {
-    const response = await apiClient.get('ebooks');
+    const response = await apiClient.get(`ebooks?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros');
+  }
+};
+
+export const getNumberBooks = async () => {
+  try {
+    const response = await apiClient.get('ebooks/amount');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el numero los libros');
   }
 };
 
@@ -91,20 +100,40 @@ export const getBooksInfo = async (bookId) => {
   }
 };
 
-export const getBooksByCategory = async (category) => {
+export const getBooksByCategory = async (category, page, limit) => {
   try{
     console.log("Categoria:",category);
-    const response = await apiClient.get(`ebooks/category/${category}`);
+    const response = await apiClient.get(`ebooks/category/${category}?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por la categoria',category);
   }
 }
 
-export const getBooksBySearch = async (keyword) => {
+export const getNumberBooksByCategory = async (category) => {
+  try{
+    console.log("Categoria:",category);
+    const response = await apiClient.get(`ebooks/category/amount/${category}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener la cantidad de los libros por la categoria',category);
+  }
+}
+
+export const getBooksBySearch = async (keyword, page, limit) => {
   try{
     console.log("Keyword:",keyword);
-    const response = await apiClient.get(`ebooks/search/${keyword}`);
+    const response = await apiClient.get(`ebooks/search/${keyword}?page=${page}&limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por la busqueda',keyword);
+  }
+}
+
+export const getNumberBooksBySearch = async (keyword) => {
+  try{
+    console.log("Keyword:",keyword);
+    const response = await apiClient.get(`ebooks/search/amount${keyword}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por la busqueda',keyword);
@@ -112,13 +141,23 @@ export const getBooksBySearch = async (keyword) => {
 }
 
 
-export const getBooksByAuthor = async (authorId) => {
+export const getBooksByAuthor = async (authorId, page, limit) => {
+  try{
+    console.log("Autor: ",authorId);
+    const response = await apiClient.get(`ebooks/author/${authorId}?page=${page}&limit=${limit}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por autor',authorId);
+  }
+}
+
+export const getNumberBooksByAuthor = async (authorId) => {
   try{
     console.log("Autor: ",authorId);
     const response = await apiClient.get(`ebooks/author/${authorId}`);
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Error al obtener los libros por autor',authorId);
+    throw new Error(error.response?.data?.message || 'Error al obtener cantidad de los libros por autor',authorId);
   }
 }
 
@@ -139,5 +178,23 @@ export const getBooksByCategoryAmount = async (amount,category) => {
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por la categoria',category, " con cantidad :",amount);
+  }
+}
+
+export const getBooksByRating = async (rating) => {
+  try{
+    const response = await apiClient.get(`ebooks/sorted/${rating}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por rating',rating);
+  }
+}
+
+export const getNumberBooksByRating = async (rating) => {
+  try{
+    const response = await apiClient.get(`ebooks/sorted/amount/${rating}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener cantidad los libros por rating',rating);
   }
 }
