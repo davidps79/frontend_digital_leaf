@@ -31,9 +31,10 @@ const SameCategorySection = ({ category }: { category: string }) => {
 
     return (
         <div className='space-y-6 col-span-2'>
+            <meta charSet="UTF-8" />
             <div className='flex w-full justify-between'>
                 <h2 className='font-bold text-xl'>Más libros de {category}</h2>
-                <Link href='' className='underline underline-offset-1 font-semibold'>ver todos</Link>
+                <Link href={`/filter/category/${encodeURIComponent(category)}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
             </div>
 
             {
