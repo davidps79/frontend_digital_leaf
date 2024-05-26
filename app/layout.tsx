@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./Navbar";
-import Footer from "./Footer";
-import ClientProvider from "./ClientProvider"; 
+import StoreProvider from "./StoreProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -19,12 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <body className={inter.className + " flex flex-col items-center h-full min-h-screen"}>
-        <ClientProvider> {/* Utiliza ClientProvider para envolver la aplicación */}
+        <StoreProvider>
           <main className="max-w-7xl pt-24 w-full h-fit">
             <Navbar />
             {children}
           </main>
-        </ClientProvider>
+        </StoreProvider>
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 export type InfoEbookDto = {
+    id: string;
     title: string;
     publisher: string;
     author: Author;
