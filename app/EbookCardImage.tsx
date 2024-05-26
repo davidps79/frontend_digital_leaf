@@ -15,7 +15,7 @@ const EbookCardImage = ({ url, title, height=14 }: { url: string, title: string,
             })
         }
         fetchImage();
-    }, []);
+    }, [url]);
 
     if (!filePath) return (
         <div style={{height: (height+"rem")}} className='bg-neutral-100 flex items-center justify-center'>
