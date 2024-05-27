@@ -2,8 +2,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { fetchUserProfile, updateUserProfile } from '@/redux/authSlice';
-import { IconUser, IconBook, IconAt, IconEdit } from '@tabler/icons-react';
+import { fetchUserProfile, logout, updateUserProfile } from '@/redux/authSlice';
+import { IconUser, IconBook, IconAt, IconEdit, IconLogout } from '@tabler/icons-react';
 
 interface FormData {
   username: string;
@@ -65,6 +65,12 @@ export default function ProfilePage() {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    dispatch(logout());
+    router.push('/login');
+  };
+
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -115,7 +121,12 @@ export default function ProfilePage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="w-full max-w-2xl p-8 space-y-8 bg-white shadow-md rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-bold text-center text-gray-900">User Profile</h2>
+      <div className="flex items-center justify-between w-full ">
+      <h2 className="text-2xl font-bold text-gray-900">User Profile</h2>
+        <button onClick={handleLogout}>
+          <IconLogout className="text-gray-900" size={24} />
+        </button>
+    </div>
         {editMode ? (
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
