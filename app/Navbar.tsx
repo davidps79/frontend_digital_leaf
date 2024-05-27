@@ -6,6 +6,8 @@ import FilterMenu from './FilterMenu'
 import Link from 'next/link';
 import { getBooksBySearch } from './API/api';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch } from '@/redux/hooks';
+import { openCart } from '@/redux/cartSlice';
 
 const Navbar = () => {
 
@@ -16,6 +18,12 @@ const Navbar = () => {
         if (search) {
             router.push(`/filter/search/${search}`);
         }
+    };
+
+    const dispatch = useAppDispatch();
+
+    const handleOpenCart = () => {
+        dispatch(openCart());
     };
 
 
@@ -68,16 +76,17 @@ const Navbar = () => {
                     </button>
                 </div>
 
-                <Link href="/shoppingcart" passHref>
-                    <div>
-                        <button
-                            type="button"
-                            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            <IconShoppingCart />
-                        </button>
-                    </div>
-                </Link>
+                
+                <div>
+                    <button
+                        type="button"
+                        onClick={handleOpenCart}
+                        className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    >
+                        <IconShoppingCart />
+                    </button>
+                </div>
+                
 
                 <Link href="/profile" passHref>
                     <button

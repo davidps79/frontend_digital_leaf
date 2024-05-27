@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { EbookCartItem } from '@/lib/book';
 import { InfoEbookDto } from '@/lib/ebook';
@@ -10,10 +10,12 @@ interface CartItem {
 
 interface CartState {
   items: CartItem[];
+  isCartOpen: boolean;  
 }
 
 const initialState: CartState = {
   items: [],
+  isCartOpen: false,  
 };
 
 const cartSlice = createSlice({
@@ -28,12 +30,22 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ book, quantity: 1 });
       }
+      state.isCartOpen = true;  
     },
     removeFromCart: (state, action: PayloadAction<EbookCartItem>) => {
       state.items = state.items.filter(item => item.book.id !== action.payload.id);
     },
+    toggleCart: (state) => {
+      state.isCartOpen = !state.isCartOpen;  
+    },
+    openCart: (state) => {
+      state.isCartOpen = true;  
+    },
+    closeCart: (state) => {
+      state.isCartOpen = false;  
+    }
   },
 });
 
-export const { addToCart, removeFromCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, toggleCart, openCart, closeCart } = cartSlice.actions;
 export default cartSlice.reducer;

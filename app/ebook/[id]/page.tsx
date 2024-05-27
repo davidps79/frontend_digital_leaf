@@ -36,7 +36,6 @@ const Page: React.FC<PageProps> = ({ params }) => {
 
   return (
       <Sheet>
-        <SideCart />
         <div className='h-fit grid grid-cols-2 gap-x-4 gap-y-16'>
           <EbookDetails ebook={ebook} />
           <SameAuthorSection author={ebook.author} />

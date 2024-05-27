@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "./Navbar";
 import StoreProvider from "./StoreProvider";
+import SideCart from "./SideCart";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,7 +23,9 @@ export default function RootLayout({
           <main className="max-w-7xl pt-24 w-full h-fit">
             <Navbar />
             {children}
+            
           </main>
+          <SideCart /> 
         </StoreProvider>
       </body>
     </html>
