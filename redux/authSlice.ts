@@ -28,7 +28,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: null,
+  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   user: null,
   profile: null,
   status: 'idle',
@@ -40,6 +40,7 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }: { email: string; password: string }) => {
     const response = await login(email, password);
+    localStorage.setItem('token', response.access_token);
     return response.access_token;
   }
 );
@@ -56,6 +57,7 @@ export const registerUser = createAsyncThunk(
     biography: string;
   }) => {
     const response = await register(userData);
+    localStorage.setItem('token', response.access_token);
     return response.access_token;
   }
 );
@@ -130,77 +132,7 @@ export const addNewEbook = createAsyncThunk(
   }
 );
 
-export const fetchShoppingCart = createAsyncThunk(
-  'cart/fetchShoppingCart',
-  async (_, { getState, rejectWithValue }) => {
-    const state: any = getState();
-    const token = state.auth.token;
-    if (!token) return rejectWithValue('No token found');
-    try {
-      const response = await getShoppingCart();
-      return response;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue('Unauthorized');
-      }
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
-export const buyCart = createAsyncThunk(
-  'cart/buyCart',
-  async (_, { getState, rejectWithValue }) => {
-    const state: any = getState();
-    const token = state.auth.token;
-    if (!token) return rejectWithValue('No token found');
-    try {
-      const response = await buyShoppingCart();
-      return response;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue('Unauthorized');
-      }
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const updateCart = createAsyncThunk(
-  'cart/updateCart',
-  async (updateShoppingCartDto, { getState, rejectWithValue }) => {
-    const state: any = getState();
-    const token = state.auth.token;
-    if (!token) return rejectWithValue('No token found');
-    try {
-      const response = await updateShoppingCart(updateShoppingCartDto);
-      return response;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue('Unauthorized');
-      }
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const removeCart = createAsyncThunk(
-  'cart/removeCart',
-  async (_, { getState, rejectWithValue }) => {
-    const state: any = getState();
-    const token = state.auth.token;
-    if (!token) return rejectWithValue('No token found');
-    try {
-      const response = await removeShoppingCart();
-      return response;
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        return rejectWithValue('Unauthorized');
-      }
-      return rejectWithValue(error.message);
-    }
-  }
-);
 
 
 
@@ -280,54 +212,7 @@ const authSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message || 'Failed to add new ebook';
       })
-      .addCase(fetchShoppingCart.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchShoppingCart.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.status = 'succeeded';
-        state.cart = action.payload;
-        state.error = null;
-      })
-      .addCase(fetchShoppingCart.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch shopping cart';
-      })
-      .addCase(buyCart.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(buyCart.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.cart = [];
-        state.error = null;
-      })
-      .addCase(buyCart.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to buy shopping cart';
-      })
-      .addCase(updateCart.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(updateCart.fulfilled, (state, action: PayloadAction<any[]>) => {
-        state.status = 'succeeded';
-        state.cart = action.payload;
-        state.error = null;
-      })
-      .addCase(updateCart.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to update shopping cart';
-      })
-      .addCase(removeCart.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(removeCart.fulfilled, (state) => {
-        state.status = 'succeeded';
-        state.cart = [];
-        state.error = null;
-      })
-      .addCase(removeCart.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message || 'Failed to remove shopping cart';
-      });
+      
   },
 });
 

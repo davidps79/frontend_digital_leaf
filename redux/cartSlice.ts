@@ -1,11 +1,10 @@
-'use client';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { EbookCartItem } from '@/lib/book';
 import { InfoEbookDto } from '@/lib/ebook';
 import { getShoppingCart, buyShoppingCart, updateShoppingCart, removeShoppingCart } from '@/app/API/api';
 
 interface CartItem {
-  book: EbookCartItem;
+  book: InfoEbookDto;
   quantity: number;
 }
 
@@ -23,40 +22,79 @@ const initialState: CartState = {
   error: null,
 };
 
-// Thunks
 export const fetchShoppingCart = createAsyncThunk(
   'cart/fetchShoppingCart',
-  async (token: string) => {
-    const response = await getShoppingCart(token);
-    return response;
+  async (_, { getState, rejectWithValue }) => {
+    const state: any = getState();
+    const token = state.auth.token;
+    if (!token) return rejectWithValue('No token found');
+    try {
+      const response = await getShoppingCart(token);
+      return response.ebooks; 
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue('Unauthorized');
+      }
+      return rejectWithValue(error.message);
+    }
   }
 );
 
 export const purchaseCart = createAsyncThunk(
   'cart/purchaseCart',
-  async (token: string) => {
-    const response = await buyShoppingCart(token);
-    return response;
+  async (_, { getState, rejectWithValue }) => {
+    const state: any = getState();
+    const token = state.auth.token;
+    if (!token) return rejectWithValue('No token found');
+    try {
+      const response = await buyShoppingCart(token);
+      return response;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue('Unauthorized');
+      }
+      return rejectWithValue(error.message);
+    }
   }
 );
 
 export const updateCart = createAsyncThunk(
   'cart/updateCart',
-  async ({ token, updateShoppingCartDto }: { token: string, updateShoppingCartDto: any }) => {
-    const response = await updateShoppingCart(token, updateShoppingCartDto);
-    return response;
+  async ({ ebookIds, operation }: { ebookIds: string[], operation: 'add' | 'remove' }, { getState, rejectWithValue }) => {
+    const state: any = getState();
+    const token = state.auth.token;
+    if (!token) return rejectWithValue('No token found');
+    try {
+      const updateDto = { ebookIds, operation };
+      const response = await updateShoppingCart(updateDto, token);
+      return response.ebooks;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue('Unauthorized');
+      }
+      return rejectWithValue(error.message);
+    }
   }
 );
 
-export const deleteCart = createAsyncThunk(
-  'cart/deleteCart',
-  async (token: string) => {
-    await removeShoppingCart(token);
-    return token;
+export const removeCart = createAsyncThunk(
+  'cart/removeCart',
+  async (_, { getState, rejectWithValue }) => {
+    const state: any = getState();
+    const token = state.auth.token;
+    if (!token) return rejectWithValue('No token found');
+    try {
+      const response = await removeShoppingCart(token);
+      return response;
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        return rejectWithValue('Unauthorized');
+      }
+      return rejectWithValue(error.message);
+    }
   }
 );
 
-// Slice
 const cartSlice = createSlice({
   name: 'cart',
   initialState,
@@ -67,11 +105,11 @@ const cartSlice = createSlice({
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        state.items.push({ book, quantity: 1 });
+        state.items.push({ book: action.payload, quantity: 1 });
       }
       state.isCartOpen = true;
     },
-    removeFromCart: (state, action: PayloadAction<EbookCartItem>) => {
+    removeFromCart: (state, action: PayloadAction<InfoEbookDto>) => {
       state.items = state.items.filter(item => item.book.id !== action.payload.id);
     },
     toggleCart: (state) => {
@@ -89,45 +127,49 @@ const cartSlice = createSlice({
       .addCase(fetchShoppingCart.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(fetchShoppingCart.fulfilled, (state, action) => {
+      .addCase(fetchShoppingCart.fulfilled, (state, action: PayloadAction<InfoEbookDto[]>) => {
         state.status = 'succeeded';
-        state.items = action.payload;
+        state.items = action.payload.map(book => ({ book, quantity: 1 }));
+        state.error = null;
       })
       .addCase(fetchShoppingCart.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to fetch shopping cart';
+        state.error = action.payload as string;
       })
       .addCase(purchaseCart.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(purchaseCart.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        state.items = [];
+        state.error = null;
       })
       .addCase(purchaseCart.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to purchase shopping cart';
+        state.error = action.payload as string;
       })
       .addCase(updateCart.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(updateCart.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.items = action.payload;
+        state.error = null;
       })
       .addCase(updateCart.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to update shopping cart';
+        state.error = action.payload as string;
       })
-      .addCase(deleteCart.pending, (state) => {
+      .addCase(removeCart.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(deleteCart.fulfilled, (state, action) => {
+      .addCase(removeCart.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.items = [];
+        state.error = null;
       })
-      .addCase(deleteCart.rejected, (state, action) => {
+      .addCase(removeCart.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message || 'Failed to delete shopping cart';
+        state.error = action.payload as string;
       });
   },
 });

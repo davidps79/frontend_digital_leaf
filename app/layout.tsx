@@ -23,7 +23,6 @@ export default function RootLayout({
           <main className="max-w-7xl pt-24 w-full h-fit">
             <Navbar />
             {children}
-            
           </main>
           <SideCart /> 
         </StoreProvider>

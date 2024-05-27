@@ -11,13 +11,36 @@ import { IconTrash } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import EbookCartImage from './EbookCartImage';
 import { formatCurrency } from '@/lib/utils';
-import { removeFromCart, closeCart, fetchShoppingCart, purchaseCart } from '@/redux/cartSlice';
+import { closeCart, fetchShoppingCart, purchaseCart, updateCart } from '@/redux/cartSlice';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useRouter } from 'next/navigation';
 
 const SideCart = () => {
     const cartItems = useAppSelector((state: RootState) => state.cart.items);
     const isCartOpen = useAppSelector((state: RootState) => state.cart.isCartOpen);
     const dispatch = useAppDispatch();
+    const token = useAppSelector((state: RootState) => state.auth.token);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (isCartOpen && token) {
+            dispatch(fetchShoppingCart());
+        } else if (!token) {
+            dispatch(closeCart())
+        }
+    }, [isCartOpen, token, dispatch, router]);
+
+    const handleRemoveFromCart = async (bookId: string) => {
+        await dispatch(updateCart({ ebookIds: [bookId], operation: 'remove' }));
+        dispatch(fetchShoppingCart());
+    };
+
+    const totalAmount = Array.isArray(cartItems) ? cartItems.reduce((acc, curr) => {
+        if (curr.book && curr.book.price) {
+            return acc + curr.book.price * curr.quantity;
+        }
+        return acc;
+    }, 0) : 0;
 
     return (
         <Sheet open={isCartOpen} onOpenChange={() => dispatch(closeCart())}>
@@ -28,10 +51,10 @@ const SideCart = () => {
 
                 <ScrollArea className="w-full h-[78%] mb-6">
                     <div className='w-full space-y-4 px-6'>
-                        {cartItems.map((item) => (
+                        {Array.isArray(cartItems) && cartItems.map((item) => (
                             <div className='flex gap-6 w-full items-center' key={item.book.id}>
                                 <div className='w-32'>
-                                    <EbookCartImage url={item.book.ebookCover} />
+                                    {item.book.ebookCover && <EbookCartImage url={item.book.ebookCover} />}
                                 </div>
 
                                 <div className='flex flex-col w-full'>
@@ -43,11 +66,11 @@ const SideCart = () => {
                                     </h5>
 
                                     <h5 className='text-lg font-semibold'>
-                                        ${formatCurrency(item.book.price)}
+                                        ${item.book.price ? formatCurrency(item.book.price) : 'N/A'}
                                     </h5>
                                 </div>
 
-                                <Button variant="ghost" onClick={() => dispatch(removeFromCart(item.book))}>
+                                <Button variant="ghost" onClick={() => handleRemoveFromCart(item.book.id)}>
                                     <IconTrash />
                                 </Button>
                             </div>
@@ -62,11 +85,11 @@ const SideCart = () => {
                         </h2>
 
                         <h2 className='font-semibold text-2xl'>
-                            ${formatCurrency(cartItems.reduce((acc, curr) => acc + curr.book.price, 0))}
+                            ${formatCurrency(totalAmount)}
                         </h2>
                     </div>
 
-                    <Button className='w-full' size="lg" >
+                    <Button className='w-full' size="lg" onClick={() => dispatch(purchaseCart())}>
                         Checkout
                     </Button>
                 </div>

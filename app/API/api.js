@@ -220,36 +220,52 @@ export const getNumberBooksByRating = async (rating) => {
   }
 }
 
-export const getShoppingCart = async () => {
+export const getShoppingCart = async (token) => {
   try {
-    const response = await apiClient.get('shoppingcart');
+    const response = await apiClient.get('shoppingcart', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener el carrito de compras');
   }
 };
 
-export const buyShoppingCart = async () => {
+export const buyShoppingCart = async (token) => {
   try {
-    const response = await apiClient.get('shoppingcart/buy');
+    const response = await apiClient.get('shoppingcart/buy', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al comprar el carrito de compras');
   }
 };
 
-export const updateShoppingCart = async (updateShoppingCartDto) => {
+export const updateShoppingCart = async (updateShoppingCartDto, token) => {
   try {
-    const response = await apiClient.put('shoppingcart', updateShoppingCartDto);
+    const response = await apiClient.put('shoppingcart', updateShoppingCartDto, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al actualizar el carrito de compras');
   }
 };
 
-export const removeShoppingCart = async () => {
+export const removeShoppingCart = async (token) => {
   try {
-    const response = await apiClient.delete('shoppingcart');
+    const response = await apiClient.delete('shoppingcart', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al eliminar el carrito de compras');
