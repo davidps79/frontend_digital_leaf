@@ -1,11 +1,23 @@
-'use client'
-import { useState } from 'react';
+'use client';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { register } from '../API/api';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { registerUser } from '@/redux/authSlice';
+
+interface FormData {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+  role: string;
+  favoriteGenre: string;
+  penName: string;
+  biography: string;
+}
 
 export default function RegisterPage() {
-  const [userType, setUserType] = useState('Reader');
-  const [formData, setFormData] = useState({
+  const [userType, setUserType] = useState<string>('Reader');
+  const [formData, setFormData] = useState<FormData>({
     username: '',
     password: '',
     confirmPassword: '',
@@ -15,10 +27,12 @@ export default function RegisterPage() {
     penName: '',
     biography: '',
   });
-  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const authStatus = useAppSelector((state) => state.auth.status);
+  const authError = useAppSelector((state) => state.auth.error);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -26,7 +40,7 @@ export default function RegisterPage() {
     });
   };
 
-  const handleUserTypeChange = (e) => {
+  const handleUserTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newUserType = e.target.value;
     setUserType(newUserType);
     setFormData({
@@ -38,14 +52,14 @@ export default function RegisterPage() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
     try {
-      const data = await register({
+      await dispatch(registerUser({
         username: formData.username,
         password: formData.password,
         email: formData.email,
@@ -53,12 +67,10 @@ export default function RegisterPage() {
         favoriteGenre: formData.favoriteGenre,
         penName: formData.penName,
         biography: formData.biography,
-      });
-      console.log(data);
-      localStorage.setItem('token', data.access_token);
+      })).unwrap();
       router.push('/');
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      console.error('Error details:', err);
     }
   };
 
@@ -66,7 +78,7 @@ export default function RegisterPage() {
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white shadow-md rounded-lg border border-gray-200">
         <h2 className="text-2xl font-bold text-center text-gray-900">Register</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
+        {authStatus === 'failed' && <p className="text-red-500 text-center">{authError}</p>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
@@ -184,7 +196,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-
           <div>
             <button
               type="submit"
@@ -194,12 +205,19 @@ export default function RegisterPage() {
             </button>
           </div>
           <div className="flex items-center justify-center text-sm">
-              <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-                I have an account
-              </a>
-            </div>
+            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              I have an account
+            </a>
+          </div>
         </form>
+        {authError && <p className="text-red-500 text-center mt-2">{authError}</p>}
+        {authStatus === 'loading' && <p className="text-center mt-2">Loading...</p>}
       </div>
     </div>
   );
 }
+
+function setError(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+

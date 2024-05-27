@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Sheet,
     SheetContent
@@ -11,7 +11,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 import EbookCartImage from './EbookCartImage';
 import { formatCurrency } from '@/lib/utils';
-import { removeFromCart, closeCart } from '@/redux/cartSlice';
+import { removeFromCart, closeCart, fetchShoppingCart, purchaseCart } from '@/redux/cartSlice';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SideCart = () => {
@@ -66,7 +66,7 @@ const SideCart = () => {
                         </h2>
                     </div>
 
-                    <Button className='w-full' size="lg">
+                    <Button className='w-full' size="lg" >
                         Checkout
                     </Button>
                 </div>

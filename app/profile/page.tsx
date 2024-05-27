@@ -1,66 +1,69 @@
-'use client'
-import { useState, useEffect } from 'react';
+'use client';
+import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import {jwtDecode} from 'jwt-decode';
-import { getUserById, getAuthorProfile, getReaderProfile, updateUser } from '../API/api';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { fetchUserProfile, updateUserProfile } from '@/redux/authSlice';
 import { IconUser, IconBook, IconAt, IconEdit } from '@tabler/icons-react';
 
+interface FormData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: string;
+  favoriteGenre?: string;
+  penName?: string;
+  biography?: string;
+}
+
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
-  const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({});
-  const [error, setError] = useState('');
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState<FormData>({} as FormData);
+  const token = useAppSelector((state) => state.auth.token);
+  const user = useAppSelector((state) => state.auth.user);
+  const profile = useAppSelector((state) => state.auth.profile);
+  const authStatus = useAppSelector((state) => state.auth.status);
+  const authError = useAppSelector((state) => state.auth.error);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          router.push('/login');
-          return;
-        }
+    if (!token) {
+      router.push('/login');
+      return;
+    }
 
-        if (token.split('.').length !== 3) {
-          throw new Error('Invalid token format');
-        }
+    if (token.split('.').length !== 3) {
+      setError('Invalid token format');
+      return;
+    }
 
-        const decodedToken = jwtDecode(token);
-        const userId = decodedToken.sub;
-        const userData = await getUserById(userId);
-        setUser(userData);
+    dispatch(fetchUserProfile(token));
+  }, [token, dispatch, router]);
 
-        if (userData.role === 'Author') {
-          const authorProfile = await getAuthorProfile(userId);
-          setProfile(authorProfile);
-        } else if (userData.role === 'Reader') {
-          const readerProfile = await getReaderProfile(userId);
-          setProfile(readerProfile);
-        }
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    fetchProfile();
-  }, [router]);
+  useEffect(() => {
+    if (authError === 'Unauthorized') {
+      router.push('/login');
+    }
+  }, [authError, router]);
 
   const handleEditClick = () => {
     setEditMode(true);
-    setFormData({
-      username: user.username,
-      email: user.email,
-      password: '',
-      confirmPassword: '',
-      role: user.role,
-      favoriteGenre: profile?.favoriteGenre || '',
-      penName: profile?.penName || '',
-      biography: profile?.biography || '',
-    });
+    if (user && profile) {
+      setFormData({
+        username: user.username,
+        email: user.email,
+        password: '',
+        confirmPassword: '',
+        role: user.role,
+        favoriteGenre: profile?.favoriteGenre || '',
+        penName: profile?.penName || '',
+        biography: profile?.biography || '',
+      });
+    }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -68,50 +71,42 @@ export default function ProfilePage() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (formData.password && formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
+    if (!token) {
+      setError('Token is missing');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.sub;
-
-      const updateData = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password || undefined,
-        role: formData.role,
-        favoriteGenre: formData.favoriteGenre || undefined,
-        penName: formData.penName || undefined,
-        biography: formData.biography || undefined,
-      };
-
-      const updatedUser = await updateUser(userId, updateData);
-      setUser(updatedUser);
-
-      if (updatedUser.role === 'Author') {
-        const authorProfile = await getAuthorProfile();
-        setProfile(authorProfile);
-      } else if (updatedUser.role === 'Reader') {
-        const readerProfile = await getReaderProfile();
-        setProfile(readerProfile);
-      }
-
+      await dispatch(updateUserProfile({
+        token,
+        updateData: {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password || undefined,
+          role: formData.role,
+          favoriteGenre: formData.favoriteGenre || undefined,
+          penName: formData.penName || undefined,
+          biography: formData.biography || undefined,
+        }
+      })).unwrap();
       setEditMode(false);
-    } catch (error) {
-      setError(error.message);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
-  if (error) {
-    return <div className="text-center text-red-500">{error}</div>;
+  if (authError && authError !== 'Unauthorized') {
+    return <div className="text-center text-red-500">{authError}</div>;
   }
 
-  if (!user || !profile) {
+  if (authStatus === 'loading' || !user || !profile) {
     return <div className="text-center">Loading...</div>;
   }
 
@@ -237,25 +232,19 @@ export default function ProfilePage() {
               <>
                 <div className="flex items-center space-x-2">
                   <IconBook className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Favorite Genre: {profile.reader.favoriteGenre}</span>
+                  <span className="text-lg font-medium text-gray-900">Favorite Genre: {profile.favoriteGenre}</span>
                 </div>
-                {profile.bookList && (
-                  <div className="flex items-center space-x-2">
-                    <IconBook className="w-6 h-6 text-gray-500" />
-                    <span className="text-lg font-medium text-gray-900">Book List: {profile.reader.bookList}</span>
-                  </div>
-                )}
               </>
             )}
             {user.role === 'Author' && (
               <>
                 <div className="flex items-center space-x-2">
                   <IconUser className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Pen Name: {profile.author.penName}</span>
+                  <span className="text-lg font-medium text-gray-900">Pen Name: {profile.penName}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <IconEdit className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Biography: {profile.author.biography}</span>
+                  <span className="text-lg font-medium text-gray-900">Biography: {profile.biography}</span>
                 </div>
                 {profile.booksWritten && profile.booksWritten.length > 0 && (
                   <div className="space-y-2">
@@ -286,4 +275,7 @@ export default function ProfilePage() {
       </div>
     </div>
   );
+}
+function setError(message: any) {
+  throw new Error('Function not implemented.');
 }

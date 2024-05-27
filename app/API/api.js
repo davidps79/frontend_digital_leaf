@@ -19,50 +19,71 @@ export const register = async (userData) => {
   }
 };
 
-export const getUserById = async (id) => {
+export const getUserById = async (id, token) => {
   try {
-    const response = await apiClient.get(`auth/${id}`);
+    const response = await apiClient.get(`/auth/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener el perfil del usuario');
   }
 };
 
-export const getAuthorProfile = async (id) => {
+export const getAuthorProfile = async (id, token) => {
   try {
-    const response = await apiClient.get(`auth/author/${id}`);
+    const response = await apiClient.get(`/auth/author/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener el perfil del autor');
   }
 };
 
-export const getReaderProfile = async (id) => {
+export const getReaderProfile = async (id, token) => {
   try {
-    const response = await apiClient.get(`auth/reader/${id}`);
+    const response = await apiClient.get(`/auth/reader/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener el perfil del lector');
   }
 };
 
-export const updateUser = async (id, updateData) => {
+export const updateUser = async (id, updateData, token) => {
   try {
-    const response = await apiClient.patch(`auth/${id}`, updateData);
+    const response = await apiClient.patch(`/auth/${id}`, updateData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al actualizar el perfil del usuario');
   }
 };
 
-export const addEbook = async (ebookData) => {
+export const addEbook = async (token, ebookData) => {
   try {
-    const response = await apiClient.post('ebooks', ebookData);
+    const response = await apiClient.post('ebooks', ebookData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al añadir un nuevo ebook');
   }
-}
+};
+
 
 export const getBooks = async (page,limit) => {
   try {
@@ -198,3 +219,39 @@ export const getNumberBooksByRating = async (rating) => {
     throw new Error(error.response?.data?.message || 'Error al obtener cantidad los libros por rating',rating);
   }
 }
+
+export const getShoppingCart = async () => {
+  try {
+    const response = await apiClient.get('shoppingcart');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el carrito de compras');
+  }
+};
+
+export const buyShoppingCart = async () => {
+  try {
+    const response = await apiClient.get('shoppingcart/buy');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al comprar el carrito de compras');
+  }
+};
+
+export const updateShoppingCart = async (updateShoppingCartDto) => {
+  try {
+    const response = await apiClient.put('shoppingcart', updateShoppingCartDto);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al actualizar el carrito de compras');
+  }
+};
+
+export const removeShoppingCart = async () => {
+  try {
+    const response = await apiClient.delete('shoppingcart');
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al eliminar el carrito de compras');
+  }
+};

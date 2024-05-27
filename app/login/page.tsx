@@ -1,24 +1,34 @@
-'use client'
-import { useState } from 'react';
+'use client';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { login } from '../API/api';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { loginUser } from '@/redux/authSlice';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const authError = useAppSelector((state) => state.auth.error);
+  const authStatus = useAppSelector((state) => state.auth.status);
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (name === 'email') setEmail(value);
+    if (name === 'password') setPassword(value);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const data = await login(email, password);
-      localStorage.setItem('token', data.access_token);
-      console.log(localStorage.getItem('token'));
+      console.log('Despachando loginUser con:', { email, password }); // Console log
+      const token = await dispatch(loginUser({ email, password })).unwrap();
+      console.log('Login exitoso, token:', token); // Console log
       router.push('/');
-    } catch (error) {
-      console.error('Error details:', error); 
-      setError(error.message);
+    } catch (err: any) {
+      console.error('Error al hacer login:', err.message); // Console log
+      setError(err.message);
     }
   };
 
@@ -40,7 +50,7 @@ export default function LoginPage() {
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Email address"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={handleChange}
               />
             </div>
             <div>
@@ -54,7 +64,7 @@ export default function LoginPage() {
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -88,11 +98,13 @@ export default function LoginPage() {
             </button>
           </div>
           <div className="flex items-center justify-center text-sm">
-              <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-                I don't have an account
-              </a>
-            </div>
+            <a href="/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
+              I dont have an account
+            </a>
+          </div>
         </form>
+        {authError && <p className="text-red-500 text-center mt-2">{authError}</p>}
+        {authStatus === 'loading' && <p className="text-center mt-2">Loading...</p>}
       </div>
     </div>
   );

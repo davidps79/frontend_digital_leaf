@@ -1,35 +1,48 @@
-'use client'
-import { useState } from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
-import { addEbook } from '../API/api';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { uploadEbook } from '@/crudEbok/uploadEbook';
 import { uploadEbookCover } from '../crudImageEbook/uploadEbookCover';
+import { addNewEbook } from '@/redux/authSlice';
+import { InfoEbookDto } from '@/lib/ebook';
 
-export default function CreateEbookPage() {
+const CreateEbookPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const token = useAppSelector((state) => state.auth.token);
   const [formData, setFormData] = useState({
     title: '',
     publisher: '',
     overview: '',
     price: '',
     stock: '',
-    fileData: null,
+    fileData: null as File | null,
     isbn: '',
     version: '',
     rating: '',
     category: '',
-    ebookCover: '',
+    ebookCover: null as File | null,
   });
   const [error, setError] = useState('');
-  const router = useRouter();
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'fileData' || name === 'ebookCover') {
-      setFormData({
-        ...formData,
-        [name]: files[0],
-      });
+  useEffect(() => {
+    if (!token) {
+      router.push('/login');
+    }
+  }, [token, router]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+
+    if (e.target instanceof HTMLInputElement && e.target.type === 'file') {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        setFormData({
+          ...formData,
+          [name]: files[0],
+        });
+      }
     } else {
       setFormData({
         ...formData,
@@ -38,42 +51,45 @@ export default function CreateEbookPage() {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!token) {
+      setError('Token is missing');
+      router.push('/login');
+      return;
+    }
+
     try {
-      const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const authorId = decodedToken.sub;
-
       const dataEbook = await uploadEbook(formData.title, formData.fileData);
-
       const dataCover = await uploadEbookCover(formData.ebookCover);
 
-      const ebookData = {
+      const ebookData: InfoEbookDto = {
+        id: '',
         title: formData.title,
         publisher: formData.publisher,
-        authorId: authorId,
+        author: { id: '', name: '' }, // Asignar los valores reales del autor
         overview: formData.overview,
-        price: formData.price,
-        stock: formData.stock,
-        fileData: dataEbook.path,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        fileUrl: dataEbook.path,
         isbn: formData.isbn,
         version: formData.version,
         rating: 0,
         category: formData.category,
-        ebookCover:dataCover.path,
+        ebookCover: dataCover.path,
       };
-      
-      console.log(ebookData);
 
-      const data = await addEbook(ebookData);
-
-      console.log(data);
-
+      await dispatch(addNewEbook({ token, ebookData })).unwrap();
       router.push('/profile');
-
-    } catch (error) {
-      setError(error.message);
+    } catch (err: any) {
+      if (err === 'Unauthorized') {
+        router.push('/login');
+      } else if (err.message === 'The resource already exists') {
+        setError('An ebook with this title already exists. Please choose a different title.');
+      } else {
+        setError(err.message);
+      }
     }
   };
 
@@ -229,4 +245,6 @@ export default function CreateEbookPage() {
       </div>
     </div>
   );
-}
+};
+
+export default CreateEbookPage;
