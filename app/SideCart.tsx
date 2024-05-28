@@ -35,6 +35,21 @@ const SideCart = () => {
         dispatch(fetchShoppingCart());
     };
 
+    const handleCheckout = async () => {
+        try {
+            const htmlResponse = await dispatch(purchaseCart()).unwrap();
+            const newWindow = window.open();
+            if (newWindow) {
+                newWindow.document.write(htmlResponse);
+                newWindow.document.close();
+            } else {
+                console.error("Failed to open new window for payment redirection.");
+            }
+        } catch (error) {
+            console.error("Error during checkout:", error);
+        }
+    };
+
     const totalAmount = Array.isArray(cartItems) ? cartItems.reduce((acc, curr) => {
         if (curr.book && curr.book.price) {
             return acc + curr.book.price * curr.quantity;
@@ -89,7 +104,7 @@ const SideCart = () => {
                         </h2>
                     </div>
 
-                    <Button className='w-full' size="lg" onClick={() => dispatch(purchaseCart())}>
+                    <Button className='w-full bg-black' size="lg" onClick={handleCheckout}>
                         Checkout
                     </Button>
                 </div>

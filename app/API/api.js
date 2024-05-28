@@ -271,3 +271,14 @@ export const removeShoppingCart = async (token) => {
     throw new Error(error.response?.data?.message || 'Error al eliminar el carrito de compras');
   }
 };
+
+export const handlePayUResponse = async (transactionData) => {
+  try {
+    const response = await apiClient.get('payments/payu-response', {
+      params: transactionData
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al procesar la respuesta de PayU');
+  }
+};

@@ -48,6 +48,7 @@ export const purchaseCart = createAsyncThunk(
     if (!token) return rejectWithValue('No token found');
     try {
       const response = await buyShoppingCart(token);
+      console.log(response)
       return response;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {
@@ -85,6 +86,7 @@ export const removeCart = createAsyncThunk(
     if (!token) return rejectWithValue('No token found');
     try {
       const response = await removeShoppingCart(token);
+      console.log(response)
       return response;
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

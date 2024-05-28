@@ -44,7 +44,8 @@ export default function ProfilePage() {
   }, [token, dispatch, router]);
 
   useEffect(() => {
-    if (authError === 'Unauthorized') {
+    if (authError === 'Unauthorized' || authError === 'Rejected') {
+      dispatch(logout())
       router.push('/login');
     }
   }, [authError, router]);
