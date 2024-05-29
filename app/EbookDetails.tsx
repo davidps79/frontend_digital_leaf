@@ -1,37 +1,45 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { IconBookmark, IconStar, IconStarFilled } from '@tabler/icons-react';
+import React, { useState } from 'react';
+import { IconBookmark } from '@tabler/icons-react';
 import { InfoEbookDto } from '@/lib/ebook';
 import EbookCover from './EbookCover';
 import CartButton from './CartButton';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
-
+import Rating from './Rating';
+import RatingPopup from './RatingPopup';
+import { getBookById } from './API/api';
 
 const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
+    const [currentEbook, setCurrentEbook] = useState(ebook);
+
+    const handleRatingSubmit = async () => {
+        //setCurrentEbook(await getBookById(currentEbook.id));
+    };
+
     return (
         <>
-            <EbookCover coverUrl={ebook.ebookCover} />
+            <EbookCover coverUrl={currentEbook.ebookCover} />
             <div className="ml-12 flex flex-col gap-8">
                 <div>
                     <h2 className='text-2xl font-bold'>
-                        {ebook.title}
+                        {currentEbook.title}
                     </h2>
 
                     <h4 className='text-lg'>
-                        por <strong className='font-semibold'>{ebook.author.name}</strong>
+                        por <strong className='font-semibold'>{currentEbook.author.name}</strong>
                     </h4>
                 </div>
 
                 <div className="flex flex-col gap-4 mb-6">
                     <h3 className="font-semibold text-xl">
-                        ${formatCurrency(ebook.price)}
+                        ${formatCurrency(currentEbook.price)}
                     </h3>
 
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex gap-2 w-full">
-                            <CartButton ebook={ebook} />
+                            <CartButton ebook={currentEbook} />
                             <Button variant="secondary" size="lg">
                                 <IconBookmark />
                             </Button>
@@ -48,7 +56,7 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                         Vistazo general
                     </h4>
                     <p className='overflow-ellipsis line-clamp-4'>
-                        {ebook.overview}
+                        {currentEbook.overview}
                     </p>
 
                     <button className='w-fit underline underline-offset-1 font-semibold'>
@@ -56,36 +64,27 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                     </button>
                 </div>
 
-                <div className='flex gap-2 text-amber-400 mb-8'>
-                    <IconStarFilled />
-                    <IconStarFilled />
-                    <IconStarFilled />
-                    <IconStarFilled />
-                    <IconStar className='mr-2' />
-                    <p className='text-black font-semibold'>
-                        67 votos
-                    </p>
-                </div>
+                <RatingPopup ebook={currentEbook} onRatingSubmit={handleRatingSubmit} />
 
                 <div className='bg-neutral-100 space-y-1 p-6 grid grid-cols-2'>
                     <div className='flex flex-col'>
                         <h5 className='text-sm font-semibold'>ISBN</h5>
-                        <p>{ebook.isbn}</p>
+                        <p>{currentEbook.isbn}</p>
                     </div>
 
                     <div className='flex flex-col'>
                         <h5 className='text-sm font-semibold'># Edición</h5>
-                        <p>{ebook.version}</p>
+                        <p>{currentEbook.version}</p>
                     </div>
 
                     <div className='flex flex-col'>
                         <h5 className='text-sm font-semibold'>Categoría</h5>
-                        <p>{ebook.category}</p>
+                        <p>{currentEbook.category}</p>
                     </div>
                 </div>
             </div>
         </>
-    )
+    );
 }
 
 export default EbookDetails;

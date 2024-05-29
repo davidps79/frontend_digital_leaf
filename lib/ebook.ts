@@ -10,6 +10,7 @@ export type InfoEbookDto = {
     isbn: string;
     version: string;
     rating: number;
+    numVotes: number;
     category:string;
     ebookCover:string;
 }

@@ -282,3 +282,26 @@ export const handlePayUResponse = async (transactionData) => {
     throw new Error(error.response?.data?.message || 'Error al procesar la respuesta de PayU');
   }
 };
+
+
+export const checkBookOwnership = async (readerId,bookId) => {
+  try {
+    const response = await apiClient.get(`ebooks/check/${readerId}/${bookId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros');
+  }
+};
+
+export const addVote = async (ebookId, voteValue, token) => {
+  try {
+    const response = await apiClient.post(`ebooks/vote/${ebookId}`, { value: voteValue }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al añadir el voto');
+  }
+};

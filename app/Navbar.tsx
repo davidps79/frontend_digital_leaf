@@ -6,13 +6,15 @@ import FilterMenu from './FilterMenu'
 import Link from 'next/link';
 import { getBooksBySearch } from './API/api';
 import { useRouter } from 'next/navigation';
-import { useAppDispatch } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { openCart } from '@/redux/cartSlice';
+import LoginRequiredPopup from './LoginRequiredPopup';
 
 const Navbar = () => {
-
     const [search, setSearch] = useState('');
+    const [showLoginPopup, setShowLoginPopup] = useState(false);
     const router = useRouter();
+    const token = useAppSelector((state) => state.auth.token);
 
     const handleSearchClick = () => {
         if (search) {
@@ -23,12 +25,23 @@ const Navbar = () => {
     const dispatch = useAppDispatch();
 
     const handleOpenCart = () => {
-        dispatch(openCart());
+        if (!token) {
+            setShowLoginPopup(true);
+        } else {
+            dispatch(openCart());
+        }
     };
 
 
+    const handleProfile = () => {
+        if (!token) {
+            setShowLoginPopup(true);
+        } else {
+            router.push("/profile")
+        }
+    };
     return (
-        <div className="w-full h-16  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
+        <div style={styles.overlay} className="w-full h-16  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
             <div className='flex gap-10 items-center'>
 
                 <Link href="/" passHref>
@@ -88,17 +101,26 @@ const Navbar = () => {
                 </div>
                 
 
-                <Link href="/profile" passHref>
+                <div>
                     <button
                         type="button"
+                        onClick={handleProfile}
                         className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
                         <IconUser />
                     </button>
-                </Link>
+                </div>
             </div>
+            {showLoginPopup && (
+                <LoginRequiredPopup onClose={() => setShowLoginPopup(false)} />
+            )}
         </div>
     )
 }
+const styles = {
+    overlay: {
+        zIndex: 99999,
+    },
+};
 
 export default Navbar

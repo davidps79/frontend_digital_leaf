@@ -29,7 +29,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  user: null,
+  user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null,
   profile: null,
   status: 'idle',
   cart: [],
@@ -41,7 +41,11 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }: { email: string; password: string }) => {
     const response = await login(email, password);
     localStorage.setItem('token', response.access_token);
-    return response.access_token;
+    const decodedToken: any = jwtDecode(response.access_token);
+    const userId = decodedToken.sub;
+    const user = await getUserById(userId, response.access_token);
+    localStorage.setItem('user', JSON.stringify(user));
+    return { token: response.access_token, user };
   }
 );
 
@@ -58,7 +62,11 @@ export const registerUser = createAsyncThunk(
   }) => {
     const response = await register(userData);
     localStorage.setItem('token', response.access_token);
-    return response.access_token;
+    const decodedToken: any = jwtDecode(response.access_token);
+    const userId = decodedToken.sub;
+    const user = await getUserById(userId, response.access_token);
+    localStorage.setItem('user', JSON.stringify(user));
+    return { token: response.access_token, user };
   }
 );
 
@@ -132,7 +140,27 @@ export const addNewEbook = createAsyncThunk(
   }
 );
 
+export const verifyToken = createAsyncThunk('auth/verifyToken', async (_, { getState, rejectWithValue }) => {
+  const state = getState() as { auth: AuthState };
+  const token = state.auth.token;
 
+  if (!token) {
+    return rejectWithValue('No token found');
+  }
+
+  try {
+    const decodedToken: any = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+
+    if (decodedToken.exp < currentTime) {
+      return rejectWithValue('Token expired');
+    }
+
+    return decodedToken;
+  } catch (error) {
+    return rejectWithValue('Invalid token');
+  }
+});
 
 
 
@@ -147,6 +175,8 @@ const authSlice = createSlice({
       state.status = 'idle';
       state.error = null;
       state.cart = [];
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
   },
   extraReducers: (builder) => {
@@ -154,9 +184,10 @@ const authSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User }>) => {
         state.status = 'succeeded';
-        state.token = action.payload;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -166,9 +197,10 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<string>) => {
+      .addCase(registerUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User }>) => {
         state.status = 'succeeded';
-        state.token = action.payload;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
         state.error = null;
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -211,6 +243,20 @@ const authSlice = createSlice({
       .addCase(addNewEbook.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message || 'Failed to add new ebook';
+      })
+      .addCase(verifyToken.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(verifyToken.fulfilled, (state, action: PayloadAction<any>) => {
+        state.status = 'succeeded';
+      })
+      .addCase(verifyToken.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload as string;
+        state.token = null;
+        state.user = null;
+        state.profile = null;
+        localStorage.removeItem('token');
       })
       
   },
