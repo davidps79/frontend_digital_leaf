@@ -8,7 +8,7 @@ import LoginRequiredPopup from './LoginRequiredPopup';
 import { addVote, checkBookOwnership } from './API/api';
 import OwnershipEbookPopup from './OwnershipEbookPopup';
 
-const RatingPopup: React.FC<{ ebook: InfoEbookDto;}> = ({ ebook,  }) => {
+const RatingPopup: React.FC<{ ebook: InfoEbookDto; onRatingSubmit: (rating: number, votesCount: number) => void }> = ({ ebook, onRatingSubmit }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [rating, setRating] = useState<number>(ebook.rating);
     const popupRef = useRef<HTMLDivElement>(null);
@@ -36,9 +36,9 @@ const RatingPopup: React.FC<{ ebook: InfoEbookDto;}> = ({ ebook,  }) => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await addVote(ebook.id, rating, token);
+            const { ratingg, votesCount } = await addVote(ebook.id, rating, token);
             setIsOpen(false);
-            //onRatingSubmit(); 
+            onRatingSubmit(ratingg, votesCount);
         } catch (error) {
             console.error("Error submitting rating:", error);
         }

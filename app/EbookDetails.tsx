@@ -7,15 +7,17 @@ import EbookCover from './EbookCover';
 import CartButton from './CartButton';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
-import Rating from './Rating';
 import RatingPopup from './RatingPopup';
-import { getBookById } from './API/api';
 
 const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
     const [currentEbook, setCurrentEbook] = useState(ebook);
 
-    const handleRatingSubmit = async () => {
-        //setCurrentEbook(await getBookById(currentEbook.id));
+    const handleRatingSubmit = (ratingg: number, votesCount: number) => {
+        setCurrentEbook({
+            ...currentEbook,
+            rating: ratingg,
+            numVotes: votesCount
+        });
     };
 
     return (
