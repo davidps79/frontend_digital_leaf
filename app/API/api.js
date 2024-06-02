@@ -341,3 +341,31 @@ export const deleteBook = async (ebookId) => {
     throw new Error(error.response?.data?.message || 'Error al eliminar el libro: ',ebookId);
   }
 }
+
+
+export const getAllUsers = async () => {
+  try{
+    const response = await apiClient.get(`/auth/`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al obtener todos los usuarios: ');
+  }
+}
+
+export const deleteUser = async (userId) => {
+  try{
+    const response = await apiClient.delete(`/auth/${userId}`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al eliminar el usuario: ',userId);
+  }
+}
+
+export const updateEbook = async (ebookId,data) => {
+  try {
+    const response = await apiClient.patch(`/ebooks/${ebookId}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al actualizar el ebook',ebookId);
+  }
+}
