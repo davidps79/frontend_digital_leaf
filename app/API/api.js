@@ -305,3 +305,21 @@ export const addVote = async (ebookId, voteValue, token) => {
     throw new Error(error.response?.data?.message || 'Error al añadir el voto');
   }
 };
+
+export const getBooksByReader = async (readerId) => {
+  try{
+    const response = await apiClient.get(`ebooks/${readerId}`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por lector');
+  }
+}
+
+export const getMyBooks = async () => {
+  try{
+    const response = await apiClient.get(`ebooks/mybooks`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por lector');
+  }
+}
