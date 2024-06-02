@@ -1,6 +1,6 @@
 import React from 'react';
 import { Book } from '@/lib/book';
-import EbookCover from './EbookCover';
+import EbookListImage from './EbookListImage';
 
 const EbookBar = ({ book }: { book:Book }) => {
 
@@ -8,7 +8,7 @@ const EbookBar = ({ book }: { book:Book }) => {
         <a href={`/`}>
             <div className='flex flex-row'>          
                 <div className='h-24 '>
-                    <EbookCover coverUrl={book.ebookCover}></EbookCover>
+                    <EbookListImage coverUrl={book.ebookCover} />
                 </div>  
                 <div>
                     <p className='font-bold'>{book.title}</p>
