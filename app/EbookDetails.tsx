@@ -7,7 +7,7 @@ import EbookCover from './EbookCover';
 import CartButton from './CartButton';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
-import RatingPopup from './RatingPopup';
+import EbookRating from './EbookRating';
 
 const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
     const [currentEbook, setCurrentEbook] = useState(ebook);
@@ -66,7 +66,7 @@ const EbookDetails = ({ ebook }: { ebook: InfoEbookDto }) => {
                     </button>
                 </div>
 
-                <RatingPopup ebook={currentEbook} onRatingSubmit={handleRatingSubmit} />
+                <EbookRating ebook={currentEbook} onRatingSubmit={handleRatingSubmit} />
 
                 <div className='bg-neutral-100 space-y-1 p-6 grid grid-cols-2'>
                     <div className='flex flex-col'>

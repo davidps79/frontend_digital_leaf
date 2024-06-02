@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Image from 'next/image'
 import { IconShoppingBag, IconUser, IconBookmarks, IconSearch, IconFilter, IconShoppingCart } from '@tabler/icons-react'
 import FilterMenu from './FilterMenu'
@@ -21,6 +21,8 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { ListItem } from './ListItem';
+import { AlertDialogContext } from './AlertDialogProvider';
+import { AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const categories = ['Fantasía', 'Comedia', 'Cuentos clásicos', 'Ciencia ficción', 'Historia', 'Misterio', 'Romance', 'Horror', 'Thriller']
 
@@ -37,10 +39,11 @@ const Navbar = () => {
     };
 
     const dispatch = useAppDispatch();
+    const { showAlertDialog } = useContext(AlertDialogContext);
 
     const handleOpenCart = () => {
         if (!token) {
-            setShowLoginPopup(true);
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión en una cuenta para acceder al carrito");
         } else {
             dispatch(openCart());
         }
@@ -55,7 +58,7 @@ const Navbar = () => {
         }
     };
     return (
-        <div className="w-full h-[4.5rem]  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
+        <div className="z-50 w-full h-[4.5rem]  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
             <div className='flex gap-10 items-center'>
 
                 <Link href="/" passHref>

@@ -1,65 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react'
+import {
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog"
+import { addVote } from './API/api';
 import { InfoEbookDto } from '@/lib/ebook';
 import { Slider } from '@mui/material';
 import { IconStar, IconStarFilled, IconStarHalfFilled } from '@tabler/icons-react';
-import Rating from './Rating';
-import { useAppSelector } from '@/redux/hooks';
-import LoginRequiredPopup from './LoginRequiredPopup';
-import { addVote, checkBookOwnership } from './API/api';
-import OwnershipEbookPopup from './OwnershipEbookPopup';
+import { Button } from '@/components/ui/button';
 
-const RatingPopup: React.FC<{ ebook: InfoEbookDto; onRatingSubmit: (rating: number, votesCount: number) => void }> = ({ ebook, onRatingSubmit }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRatingSubmit: any, ebook: InfoEbookDto, token: string }) => {
     const [rating, setRating] = useState<number>(ebook.rating);
-    const popupRef = useRef<HTMLDivElement>(null);
-    const [showLoginPopup, setShowLoginPopup] = useState(false);
-    const [showOwnerShipPopup, setShowOwnerShipPopup] = useState(false);
-    const token = useAppSelector((state) => state.auth.token);
-    const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
 
-    const handleChange = (event: Event, newValue: number | number[]) => {
+    const handleChange = (_: Event, newValue: number | number[]) => {
         setRating(newValue as number);
     };
-
-    const togglePopup = async () => {
-        if (!token) {
-            setShowLoginPopup(true);
-        } else {
-            if (await checkBookOwnership(userId, ebook.id)) {
-                setIsOpen(!isOpen);
-            } else {
-                setShowOwnerShipPopup(true);
-            }
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            const { ratingg, votesCount } = await addVote(ebook.id, rating, token);
-            setIsOpen(false);
-            onRatingSubmit(ratingg, votesCount);
-        } catch (error) {
-            console.error("Error submitting rating:", error);
-        }
-    };
-
-    const handleClickOutside = (e: MouseEvent) => {
-        if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-            setIsOpen(false);
-        }
-    };
-
-    useEffect(() => {
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [isOpen]);
 
     const renderStars = (rating: number) => {
         const value = Math.round(rating * 2) / 2;
@@ -101,48 +57,37 @@ const RatingPopup: React.FC<{ ebook: InfoEbookDto; onRatingSubmit: (rating: numb
         );
     };
 
-    return (
-        <div>
-            <button onClick={togglePopup} className="flex gap-2">
-                <Rating rating={ebook.rating} starSize={25} />
-                <p className='ml-3 mt-1 text-lg bold font-semibold'>{ebook.numVotes} Votes</p>
-            </button>
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            const { ratingg, votesCount } = await addVote(ebook.id, rating, token);
+            onRatingSubmit(ratingg, votesCount);
+        } catch (error) {
+            console.error("Error submitting rating:", error);
+        }
+        close();
+    };
 
-            {isOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-                    <div ref={popupRef} className="bg-white p-6 rounded shadow-lg z-60">
-                        <h2 className="text-2xl mb-4 font-semibold">Rate {ebook.title}</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                {renderStars(rating)}
-                            </div>
-                            <div className="flex justify-end">
-                                <button
-                                    type="button"
-                                    onClick={togglePopup}
-                                    className="px-4 py-2 rounded mr-2"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="px-4 py-2 bg-black text-white rounded"
-                                >
-                                    Submit
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-            {showLoginPopup && (
-                <LoginRequiredPopup onClose={() => setShowLoginPopup(false)} />
-            )}
-            {showOwnerShipPopup && (
-                <OwnershipEbookPopup onClose={() => setShowOwnerShipPopup(false)} />
-            )}
-        </div>
-    );
-};
+    return (<DialogContent>
+        <DialogHeader>
+            <DialogTitle>Puntúa "{ebook.title}"</DialogTitle>
+        </DialogHeader>
+
+        {/* <h2 className="text-2xl mb-4 font-semibold">Rate {ebook.title}</h2> */}
+        <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+                {renderStars(rating)}
+            </div>
+            <div className="flex gap-2 justify-end">
+                <Button variant="secondary" onClick={() => close()}>
+                    Cancelar
+                </Button>
+                <Button type="submit">
+                    Enviar puntuación   
+                </Button>
+            </div>
+        </form>
+    </DialogContent>)
+}
 
 export default RatingPopup;
