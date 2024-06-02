@@ -14,7 +14,7 @@ const EbookCard = ({ book }: { book: Book }) => {
 
                 <div className="mt-2">
 
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-semibold text-lg line-clamp-1 overflow-ellipsis">
                         {book.title}
                     </h3>
 
@@ -22,7 +22,7 @@ const EbookCard = ({ book }: { book: Book }) => {
                         {book.author.penName}
                     </h4>
 
-                    <div className='flex justify-between items-center w-full'>
+                    <div className='flex justify-between items-center w-full pr-4'>
                         <h3 className='font-semibold mt-2'>
                             ${formatCurrency(book.price)}
                         </h3>

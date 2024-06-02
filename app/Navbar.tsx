@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { IconShoppingBag, IconUser, IconBookmarks, IconSearch, IconFilter, IconShoppingCart } from '@tabler/icons-react'
@@ -9,6 +9,20 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { openCart } from '@/redux/cartSlice';
 import LoginRequiredPopup from './LoginRequiredPopup';
+import { Button } from '@/components/ui/button';
+
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
+import { ListItem } from './ListItem';
+
+const categories = ['Fantasía', 'Comedia', 'Cuentos clásicos', 'Ciencia ficción', 'Historia', 'Misterio', 'Romance', 'Horror', 'Thriller']
 
 const Navbar = () => {
     const [search, setSearch] = useState('');
@@ -41,75 +55,81 @@ const Navbar = () => {
         }
     };
     return (
-        <div style={styles.overlay} className="w-full h-16  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
+        <div className="w-full h-[4.5rem]  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
             <div className='flex gap-10 items-center'>
 
                 <Link href="/" passHref>
-                    <div>
-                        <button
-                            type="button"
-
-                            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-3 py-1 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            <Image className='w-fit h-full object-contain' src="/logo.png" width={30} height={15} alt="epa" />
-                        </button>
-                    </div>
+                    <Image className='w-fit h-full object-contain' src="/logo.png" width={30} height={15} alt="epa" />
                 </Link>
 
+                <NavigationMenu>
+                    <NavigationMenuList>
+                        <NavigationMenuItem>
+                            <NavigationMenuTrigger>Categorías</NavigationMenuTrigger>
+                            <NavigationMenuContent className='bg-white p-4'>
+                                <ul className='w-36'>
+                                    {
+                                        categories.map((category) => (
+                                            <ListItem href={`/filter/category/${category}`} title={category} />
+                                        ))
+                                    }
+                                </ul>
+                            </NavigationMenuContent>
+                        </NavigationMenuItem>
 
-                <ul className='flex gap-8'>
-                    <li>Categorías</li>
-                    <li><button onClick={() => router.push('/filter/rating/DESC')}>Colección selecta</button></li>
-                    <li>Recién llegados</li>
-                </ul>
+                        <NavigationMenuItem>
+                            <Link href="/" legacyBehavior passHref>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    Recién llegados
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+
+                        <NavigationMenuItem>
+                            <Link legacyBehavior href="/" passHref>
+                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                                    Colección selecta
+                                </NavigationMenuLink>
+                            </Link>
+                        </NavigationMenuItem>
+
+                    </NavigationMenuList>
+                </NavigationMenu>
             </div>
 
-            <div className='flex gap-2 items-center'>
+            <div className='transition-all focus-within:bg-slate-100 bg-slate-50 flex gap-2 items-center pl-2'>
                 <input
                     type="text"
+                    autoComplete="off"
                     placeholder="Buscar"
-                    className="rounded-full w-[500px] border-gray-400 mr-2"
+                    className="bg-transparent border-0 h-full focus:outline-0 w-[500px] px-3"
                     id="searchInput"
                     onChange={(e) => {
                         setSearch(e.target.value);
                     }}
+                    onKeyUp={(e) => {
+                        if (e.key === 'Enter') {
+                            handleSearchClick();
+                        }
+                    }}
                 />
-                <IconSearch onClick={handleSearchClick} />
-                <FilterMenu />
+                <Button variant="ghost" className="hover:!bg-slate-200 w-fit px-5">
+                    <IconSearch className='w-5 h-5' onClick={handleSearchClick} />
+                </Button>
             </div>
-            <div className='flex gap-4 items-center'>
 
+            <div className='flex gap-2 items-center'>
+                <Button variant="ghost">
+                    <IconBookmarks />
+                </Button>
 
-                <div>
-                    <button
-                        type="button"
-                        className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        <IconBookmarks />
-                    </button>
-                </div>
+                <Button variant="ghost" onClick={handleOpenCart}>
+                    <IconShoppingCart />
+                </Button>
 
-                
-                <div>
-                    <button
-                        type="button"
-                        onClick={handleOpenCart}
-                        className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        <IconShoppingCart />
-                    </button>
-                </div>
-                
-
-                <div>
-                    <button
-                        type="button"
-                        onClick={handleProfile}
-                        className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        <IconUser />
-                    </button>
-                </div>
+                <Button variant="ghost" onClick={handleProfile}>
+                    <IconUser />
+                </Button>
             </div>
             {showLoginPopup && (
                 <LoginRequiredPopup onClose={() => setShowLoginPopup(false)} />
@@ -117,10 +137,5 @@ const Navbar = () => {
         </div>
     )
 }
-const styles = {
-    overlay: {
-        zIndex: 99999,
-    },
-};
 
 export default Navbar
