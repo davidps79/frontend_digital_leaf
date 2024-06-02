@@ -323,3 +323,12 @@ export const getMyBooks = async () => {
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por lector');
   }
 }
+
+export const deleteBook = async (ebookId) => {
+  try{
+    const response = await apiClient.delete(`/ebooks/${ebookId}`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al eliminar el libro: ',ebookId);
+  }
+}
