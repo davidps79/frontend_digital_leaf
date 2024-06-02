@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import EbookDetails from '@/app/EbookDetails';
-import { getBooksInfo } from '../../API/api';
+import { checkBookAuthor, checkBookOwnership, getBooksInfo } from '../../API/api';
 import { InfoEbookDto } from '@/lib/ebook';
 import SameAuthorSection from '@/app/SameAuthorSection';
 import SameCategorySection from '@/app/SameCategorySection';
 import { Sheet, } from "@/components/ui/sheet"
+import { useAppSelector } from '@/redux/hooks';
+import { notFound } from 'next/navigation';
 
 interface PageProps {
   params: {
@@ -14,35 +16,43 @@ interface PageProps {
   };
 }
 
-import StoreProvider from '@/app/StoreProvider';
-import SideCart from '@/app/SideCart';
-
 const Page: React.FC<PageProps> = ({ params }) => {
-  const [ebook, setEbook] = useState<InfoEbookDto>();
+  const [data, setData] = useState<{ ebook: InfoEbookDto, ownsBook: boolean }>();
   const ebookId = params.id;
+  const token = useAppSelector((state) => state.auth.token);
+  const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
 
   useEffect(() => {
     const fetchEbookInfo = async () => {
-      const book = await getBooksInfo(ebookId);
-      if (book) {
-        setEbook(book);
+      const ebook = await getBooksInfo(ebookId);
+      if (ebook) {
+        let ownsBook = false;
+
+        if (token) {
+          const bought = await checkBookOwnership(userId, ebook.id);
+          const isAuthor = await checkBookAuthor(userId, ebook.id);
+          ownsBook = bought || isAuthor;
+        }
+        
+        setData({ ebook, ownsBook });
+      } else {
+        return notFound();
       }
     }
 
     fetchEbookInfo();
   }, []);
 
-  if (!ebook) return <>loading..</>
+  if (!data) return <>loading..</>
 
   return (
-      <Sheet>
-        <div className='h-fit grid grid-cols-2 gap-x-4 gap-y-16'>
-          <EbookDetails ebook={ebook} />
-          <SameAuthorSection author={ebook.author} />
-          <SameCategorySection category={ebook.category} />
-        </div>
-      </Sheet>
-
+    <Sheet>
+      <div className='h-fit grid grid-cols-2 gap-x-4 gap-y-16'>
+        <EbookDetails ebook={data.ebook} ownsBook={data.ownsBook} />
+        <SameAuthorSection author={data.ebook.author} />
+        <SameCategorySection category={data.ebook.category} />
+      </div>
+    </Sheet>
   );
 };
 

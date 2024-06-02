@@ -7,11 +7,12 @@ import {
 import { addVote } from './API/api';
 import { InfoEbookDto } from '@/lib/ebook';
 import { Slider } from '@mui/material';
-import { IconStar, IconStarFilled, IconStarHalfFilled } from '@tabler/icons-react';
+import { IconLoader2, IconStar, IconStarFilled, IconStarHalfFilled } from '@tabler/icons-react';
 import { Button } from '@/components/ui/button';
 
 const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRatingSubmit: any, ebook: InfoEbookDto, token: string }) => {
     const [rating, setRating] = useState<number>(ebook.rating);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleChange = (_: Event, newValue: number | number[]) => {
         setRating(newValue as number);
@@ -58,6 +59,7 @@ const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRa
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        setLoading(true);
         e.preventDefault();
         try {
             const { ratingg, votesCount } = await addVote(ebook.id, rating, token);
@@ -65,6 +67,7 @@ const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRa
         } catch (error) {
             console.error("Error submitting rating:", error);
         }
+        setLoading(false);
         close();
     };
 
@@ -75,15 +78,25 @@ const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRa
 
         {/* <h2 className="text-2xl mb-4 font-semibold">Rate {ebook.title}</h2> */}
         <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-                {renderStars(rating)}
-            </div>
+            {
+                loading ?
+                    null
+                    :
+                    <div className="mb-4">
+                        {renderStars(rating)}
+                    </div>
+            }
             <div className="flex gap-2 justify-end">
                 <Button variant="secondary" onClick={() => close()}>
                     Cancelar
                 </Button>
-                <Button type="submit">
-                    Enviar puntuación   
+                <Button disabled={loading} type="submit">
+                    {
+                        loading ?
+                            <IconLoader2 className='animate-spin' />
+                            :
+                            "Enviar puntuación"
+                    }
                 </Button>
             </div>
         </form>

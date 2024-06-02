@@ -290,7 +290,7 @@ export default function ProfilePage() {
         )}
 
       </div>
-      <div >
+      <div className="mt-10">
         {editMode?(
           <></>
         ):(

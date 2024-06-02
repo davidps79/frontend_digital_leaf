@@ -5,7 +5,7 @@ import EbookListImage from './EbookListImage';
 const EbookBar = ({ book }: { book:Book }) => {
 
     return (
-        <a href={`/`}>
+        <a href={`/viewer/${book.id}`}>
             <div className='flex flex-row'>          
                 <div className='h-24 '>
                     <EbookListImage coverUrl={book.ebookCover} />

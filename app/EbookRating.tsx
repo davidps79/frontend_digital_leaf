@@ -8,9 +8,8 @@ import { AlertDialogContext } from './AlertDialogProvider';
 import { Dialog } from '@/components/ui/dialog';
 import RatingPopup from './RatingPopup';
 
-const EbookRating: React.FC<{ ebook: InfoEbookDto; onRatingSubmit: (rating: number, votesCount: number) => void }> = ({ ebook, onRatingSubmit }) => {
+const EbookRating: React.FC<{ ownsBook: boolean; ebook: InfoEbookDto; onRatingSubmit: (rating: number, votesCount: number) => void }> = ({ ebook, onRatingSubmit, ownsBook }) => {
     const token = useAppSelector((state) => state.auth.token);
-    const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
     const { showAlertDialog } = useContext(AlertDialogContext);
     const [open, setOpen] = useState<boolean>(false);
 
@@ -18,7 +17,7 @@ const EbookRating: React.FC<{ ebook: InfoEbookDto; onRatingSubmit: (rating: numb
         if (!token) {
             showAlertDialog("Inicia sesión", "Debes iniciar sesión en una cuenta para puntuar un libro");
         } else {
-            if (await checkBookOwnership(userId, ebook.id)) {
+            if (ownsBook) {
                 setOpen(true)
             } else {
                 showAlertDialog("Compra el libro primero", "Debes ser dueño de este libro para puntuarlo");

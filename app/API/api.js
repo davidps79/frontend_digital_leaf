@@ -293,6 +293,15 @@ export const checkBookOwnership = async (readerId,bookId) => {
   }
 };
 
+export const checkBookAuthor = async (authorId, ebookId) => {
+  try{
+    const response = await apiClient.get(`ebooks/checkAuthor/${authorId}/${ebookId}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener los libros por autor',authorId);
+  }
+}
+
 export const addVote = async (ebookId, voteValue, token) => {
   try {
     const response = await apiClient.post(`ebooks/vote/${ebookId}`, { value: voteValue }, {
@@ -321,5 +330,14 @@ export const getMyBooks = async () => {
     return response.data;
   }catch (error){
     throw new Error(error.response?.data?.message || 'Error al obtener los libros por lector');
+  }
+}
+
+export const deleteBook = async (ebookId) => {
+  try{
+    const response = await apiClient.delete(`/ebooks/${ebookId}`);
+    return response.data;
+  }catch (error){
+    throw new Error(error.response?.data?.message || 'Error al eliminar el libro: ',ebookId);
   }
 }
