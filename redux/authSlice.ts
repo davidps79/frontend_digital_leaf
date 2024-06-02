@@ -2,18 +2,19 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios'; // Asegúrate de tener Axios importado
 import { login, register, getUserById, updateUser, getAuthorProfile, getReaderProfile, addEbook, removeShoppingCart, updateShoppingCart, buyShoppingCart, getShoppingCart } from '../app/API/api';
 import { jwtDecode } from 'jwt-decode';
+import { Author } from '@/lib/author';
+import { Reader } from '@/lib/reader';
 
-interface User {
+export interface User {
   id: string;
   username: string;
   email: string;
   role: string;
 }
 
-interface Profile {
-  favoriteGenre?: string;
-  penName?: string;
-  biography?: string;
+export interface Profile {
+  reader?:Reader;
+  author?:Author;
   booksWritten?: { id: string; title: string }[];
 }
 
