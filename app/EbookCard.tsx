@@ -12,27 +12,22 @@ const EbookCard = ({ book }: { book: Book }) => {
             <Link href={`/ebook/${book.id}`} passHref>
                 <EbookCardImage title={book.title} url={book.ebookCover} />
 
-                <div className="flex justify-between">
-                    <div>
-                        <h3 className="font-bold text-xl">
-                            {book.title}
-                        </h3>
+                <div className="mt-2">
 
-                        <h4 className='text-neutral-600 text-lg'>
-                            {book.author.penName}
-                        </h4>
+                    <h3 className="font-semibold text-lg">
+                        {book.title}
+                    </h3>
 
-                        <Rating rating={book.rating} starSize={18}/>
+                    <h4 className='text-neutral-600'>
+                        {book.author.penName}
+                    </h4>
+
+                    <div className='flex justify-between items-center w-full'>
                         <h3 className='font-semibold mt-2'>
                             ${formatCurrency(book.price)}
                         </h3>
-
+                        <Rating rating={book.rating} starSize={18} />
                     </div>
-
-
-                    
-                   
-
                 </div>
             </Link>
         </div>

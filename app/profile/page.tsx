@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchUserProfile, logout, updateUserProfile } from '@/redux/authSlice';
 import { IconUser, IconBook, IconAt, IconEdit, IconLogout } from '@tabler/icons-react';
+import UserBooksSection from '../UserBooksSection'
 
 interface FormData {
   username: string;
@@ -59,9 +60,9 @@ export default function ProfilePage() {
         password: '',
         confirmPassword: '',
         role: user.role,
-        favoriteGenre: profile?.favoriteGenre || '',
-        penName: profile?.penName || '',
-        biography: profile?.biography || '',
+        favoriteGenre: profile?.reader?.favoriteGenre || '',
+        penName: profile?.author?.penName || '',
+        biography: profile?.author?.biography || '',
       });
     }
   };
@@ -120,7 +121,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-white">
       <div className="w-full max-w-2xl p-8 space-y-8 bg-white shadow-md rounded-lg border border-gray-200">
       <div className="flex items-center justify-between w-full ">
       <h2 className="text-2xl font-bold text-gray-900">User Profile</h2>
@@ -246,20 +247,21 @@ export default function ProfilePage() {
               <>
                 <div className="flex items-center space-x-2">
                   <IconBook className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Favorite Genre: {profile.favoriteGenre}</span>
+                  <span className="text-lg font-medium text-gray-900">Favorite Genre: {profile.reader?.favoriteGenre}</span>
                 </div>
               </>
             )}
             {user.role === 'Author' && (
               <>
-                <div className="flex items-center space-x-2">
-                  <IconUser className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Pen Name: {profile.penName}</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <IconEdit className="w-6 h-6 text-gray-500" />
-                  <span className="text-lg font-medium text-gray-900">Biography: {profile.biography}</span>
-                </div>
+                {profile.author && (
+                  <><div className="flex items-center space-x-2">
+                      <IconUser className="w-6 h-6 text-gray-500" />
+                      <span className="text-lg font-medium text-gray-900">Pen Name: {profile.author.penName}</span>
+                    </div><div className="flex items-center space-x-2">
+                        <IconEdit className="w-6 h-6 text-gray-500" />
+                        <span className="text-lg font-medium text-gray-900">Biography: {profile.author.biography}</span>
+                      </div></>
+                )}
                 {profile.booksWritten && profile.booksWritten.length > 0 && (
                   <div className="space-y-2">
                     <h3 className="text-lg font-medium text-gray-900">Books Written:</h3>
@@ -285,6 +287,14 @@ export default function ProfilePage() {
               Edit Profile
             </button>
           </div>
+        )}
+
+      </div>
+      <div className="mt-10">
+        {editMode?(
+          <></>
+        ):(
+          <UserBooksSection user={profile}></UserBooksSection>
         )}
       </div>
     </div>
