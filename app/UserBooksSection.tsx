@@ -28,8 +28,8 @@ const UserBooksSection = ({ user }: { user: Profile }) => {
     };
 
     return (
-        <div>
-            <h3>Tus Libros:</h3>
+        <div className="flex flex-col justify-center">
+            <h3 className='font-bold'>Tus Libros</h3>
             <ul>
                 {profile.author === undefined ? (
                     books && books.map((book) => (
