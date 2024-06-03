@@ -1,8 +1,9 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Digital Leaf Project Front-end
 
-## Getting Started
+Este proyecto, hace parte de la materia Computacion en Internet 3, es un e-commerce de libros digitales o ebooks, en donde se manejan tres tipos de usuario, administrador, lector y autor. Los usuarios pueden adquirir libros por medio de una pasarela de pagos por medio de Pay-U, y posteriormente visualizarlos.
 
-First, run the development server:
+Antes de iniciar este proyecto se debe descargar y seguir las instrucciones del proyecto [Back-end](https://github.com/ICESI-CI3/backend-grupo-13) de Digital Leaf.
+Despues de esto, se debe proceder a descargar el proyecto, y por ultimo ejecutar el comando:
 
 ```bash
 npm run dev
@@ -13,21 +14,6 @@ pnpm dev
 # or
 bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
