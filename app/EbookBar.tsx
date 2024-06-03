@@ -10,10 +10,12 @@ const EbookBar = ({ book }: { book:Book }) => {
                 <div className='h-24 '>
                     <EbookListImage coverUrl={book.ebookCover} />
                 </div>  
-                <div>
-                    <p className='font-bold'>{book.title}</p>
-                    <p>{book.author.penName}</p>
-                    <p>{book.category}</p>
+                <div className='flex items-center justify-center'>
+                    <div>
+                        <p className='font-bold'>{book.title}</p>
+                        <p>{book.author.penName}</p>
+                        <p>{book.category}</p>
+                    </div>  
                 </div>
             </div>
         </a>
