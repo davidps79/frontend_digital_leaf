@@ -40,6 +40,7 @@
     "react-reader": "^2.0.10",
     "react-redux": "^9.1.2",
     "redux": "^5.0.1",
+    "sharp": "^0.33.4",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7"
   },

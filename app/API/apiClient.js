@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiClient = axios.create({ 
-    baseURL: 'http://localhost:3001/', 
+    baseURL: 'https://backend-grupo-13.onrender.com/', 
     headers: {'Content-Type': 'application/json'}
 });
 

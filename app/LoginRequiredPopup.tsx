@@ -43,7 +43,7 @@ const LoginRequiredPopup: React.FC<LoginRequiredPopupProps> = ({ onClose }) => {
                         Cancel
                     </Button>
                     <Button
-                        variant="primary"
+                        variant="default"
                         onClick={handleLoginRedirect}
                         className="px-4 py-2 bg-black text-white"
                     >

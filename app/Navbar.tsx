@@ -68,8 +68,8 @@ const Navbar = () => {
                             <NavigationMenuContent className='bg-white p-4'>
                                 <ul className='w-36'>
                                     {
-                                        categories.map((category) => (
-                                            <ListItem href={`/filter/category/${category}`} title={category} />
+                                        categories.map((category, idx) => (
+                                            <ListItem key={idx} href={`/filter/category/${category}`} title={category} />
                                         ))
                                     }
                                 </ul>

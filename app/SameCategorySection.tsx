@@ -47,8 +47,8 @@ const SameCategorySection = ({ category }: { category: string }) => {
                     }}>
                         <CarouselContent >
                             {
-                                books.map((book) => (
-                                    <CarouselItem className='basis-1/4'>
+                                books.map((book, idx) => (
+                                    <CarouselItem key={idx} className='basis-1/4'>
                                         <EbookCard key={book.id} book={book} />
                                     </CarouselItem>
                                 ))
@@ -60,8 +60,8 @@ const SameCategorySection = ({ category }: { category: string }) => {
                     :
                     <div className='grid grid-cols-4 gap-4'>
                         {
-                            Array(4).fill(0).map((_) => (
-                                <EbookCardLoader />
+                            Array(4).fill(0).map((_, idx) => (
+                                <EbookCardLoader key={idx} />
                             ))
                         }
                     </div>

@@ -9,9 +9,8 @@ import { AlertDialogContext } from './AlertDialogProvider';
 
 const CartButton = ({ ebook }: { ebook: InfoEbookDto }) => {
     const dispatch = useAppDispatch();
-    const [showLoginPopup, setShowLoginPopup] = useState(false);
     const token = useAppSelector((state) => state.auth.token);
-    const {showAlertDialog} = useContext(AlertDialogContext);
+    const { showAlertDialog } = useContext(AlertDialogContext);
 
     const handleAddToCart = () => {
         if (!token) {
@@ -20,18 +19,15 @@ const CartButton = ({ ebook }: { ebook: InfoEbookDto }) => {
             dispatch(updateCart({ ebookIds: [ebook.id], operation: 'add' }));
             dispatch(openCart());
         }
-        
+
     };
 
     return (
         <div className='w-full'>
-        <Button onClick={handleAddToCart} variant="default" size="lg" className='w-full'>
-            Añadir al carrito
-            <IconShoppingBagPlus className='ml-2' />
-        </Button>
-            {showLoginPopup && (
-                <LoginRequiredPopup onClose={() => setShowLoginPopup(false)} />
-            )}
+            <Button onClick={handleAddToCart} variant="default" size="lg" className='w-full'>
+                Añadir al carrito
+                <IconShoppingBagPlus className='ml-2' />
+            </Button>
         </div>
     );
 };
