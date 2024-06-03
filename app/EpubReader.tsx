@@ -38,8 +38,8 @@ const EpubReader = ({ ebookId }: { ebookId: string }) => {
 
             let ownsBook = false;
             if (token) {
-                const bought = await checkBookOwnership(readerId, ebook.id);
-                const isAuthor = await checkBookAuthor(authorId, ebook.id);
+                const bought = readerId? await checkBookOwnership(readerId, ebook.id) : false;
+                const isAuthor = authorId? await checkBookAuthor(authorId, ebook.id) : false;
                 ownsBook = bought || isAuthor;
             }
 
