@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const apiClient = axios.create({ 
-    baseURL: process.env.API_BASE, 
-    headers: {'Content-Type': 'application/json'}
+const apiClient = axios.create({
+  baseURL: "https://backend-grupo-13.onrender.com/",
+  headers: { 'Content-Type': 'application/json' }
 });
 
 apiClient.interceptors.request.use(
@@ -14,7 +14,7 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error("Error",error);
+    console.error("Error", error);
     return Promise.reject(error);
   }
 );
