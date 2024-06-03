@@ -21,8 +21,8 @@ const Page: React.FC<PageProps> = ({ params }) => {
   const [data, setData] = useState<{ ebook: InfoEbookDto, ownsBook: boolean }>();
   const ebookId = params.id;
   const token = useAppSelector((state) => state.auth.token);
-  const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
-  const profile = useAppSelector((state) => state.auth.profile );
+  const authorId = useAppSelector((state) => state.auth.profile?.author?.id );
+  const readerId = useAppSelector((state) => state.auth.profile?.reader?.id );
 
   useEffect(() => {
     const fetchEbookInfo = async () => {
@@ -31,13 +31,8 @@ const Page: React.FC<PageProps> = ({ params }) => {
         let ownsBook = false;
 
         if (token) {
-          console.log(JSON.stringify(profile))
-
-          const bought = await checkBookOwnership(userId, ebook.id);
-          const isAuthor = await checkBookAuthor(profile, ebook.id);
-          console.log(userId + " userId")
-          console.log(bought + " bought")
-          console.log(isAuthor + " isAuthor")
+          const bought = await checkBookOwnership(readerId, ebook.id);
+          const isAuthor = await checkBookAuthor(authorId, ebook.id);
           ownsBook = bought || isAuthor;
         }
         
