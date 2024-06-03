@@ -48,10 +48,10 @@ export default function HomePage() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Digital Library</h1>
+      <h1 className="text-3xl font-bold text-center mb-8">Librería Digital</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {books.map((book) => (
-          <EbookCard book={book} />
+        {books.map((book, idx) => (
+          <EbookCard key={idx} book={book} />
         ))}
       </div>
       <div className="flex justify-center mt-4">

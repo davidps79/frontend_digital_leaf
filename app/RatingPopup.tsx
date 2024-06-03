@@ -73,7 +73,7 @@ const RatingPopup = ({ close, onRatingSubmit, ebook, token }: { close: any, onRa
 
     return (<DialogContent>
         <DialogHeader>
-            <DialogTitle>Puntúa "{ebook.title}"</DialogTitle>
+            <DialogTitle>Puntúa `&quot;`{ebook.title}`&quot;`</DialogTitle>
         </DialogHeader>
 
         {/* <h2 className="text-2xl mb-4 font-semibold">Rate {ebook.title}</h2> */}

@@ -23,7 +23,7 @@ const EbookCover = ({ coverUrl }: { coverUrl: string }) => {
                 filePath ?
                     <Image alt="Carátula del libro" className='max-h-[90%] object-contain h-full' width={400} height={600} src={filePath} />
                     :
-                    <IconBook className='bg-black animate-pulse'/>
+                    <IconBook className='animate-pulse'/>
             }
         </div>)
 }

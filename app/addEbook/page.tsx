@@ -84,6 +84,7 @@ const CreateEbookPage: React.FC = () => {
         rating: formData.rating,
         category: formData.category,
         ebookCover: dataCover.path,
+        numVotes: 0
       };
 
       await dispatch(addNewEbook({ token, ebookData })).unwrap();

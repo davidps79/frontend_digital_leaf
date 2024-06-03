@@ -8,9 +8,11 @@ import CartButton from './CartButton';
 import { Button } from '@/components/ui/button';
 import { formatCurrency } from '@/lib/utils';
 import EbookRating from './EbookRating';
+import { useRouter } from 'next/navigation';
 
 const EbookDetails = ({ ebook, ownsBook }: { ebook: InfoEbookDto, ownsBook: boolean }) => {
     const [currentEbook, setCurrentEbook] = useState(ebook);
+    const router = useRouter();
 
     const handleRatingSubmit = (ratingg: number, votesCount: number) => {
         setCurrentEbook({
@@ -39,19 +41,14 @@ const EbookDetails = ({ ebook, ownsBook }: { ebook: InfoEbookDto, ownsBook: bool
                     {
                         ownsBook ?
                             (<div className='flex flex-col gap-2 w-full pt-6'>
-                                <Button variant="default" size="lg" className='w-full'>
+                                <Button onClick={() => "/viewer/" + ebook.id} variant="default" size="lg" className='w-full'>
                                     Leer Libro
                                 </Button>
                             </div>) :
                             (
                                 <div className="flex flex-col gap-2 w-full pt-3">
-                                    <div className="flex gap-2 w-full ">
-                                        <CartButton ebook={currentEbook} />
-                                        <Button variant="secondary" size="lg">
-                                            <IconBookmark />
-                                        </Button>
-                                    </div>
-                                    <Button variant="outline">
+                                    <CartButton ebook={currentEbook} />
+                                    <Button onClick={() => router.push("/viewer/" + ebook.id)} variant="outline">
                                         Ver páginas de muestra
                                     </Button>
                                 </div>
