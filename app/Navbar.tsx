@@ -85,7 +85,7 @@ const Navbar = () => {
                         </NavigationMenuItem>
 
                         <NavigationMenuItem>
-                            <Link legacyBehavior href="/" passHref>
+                            <Link legacyBehavior href="/filter/rating/DESC" passHref>
                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                     Colección selecta
                                 </NavigationMenuLink>
