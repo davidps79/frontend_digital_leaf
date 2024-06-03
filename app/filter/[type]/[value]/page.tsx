@@ -10,8 +10,6 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
   const router = useRouter();
   const booksPerPage = 12;
   const { type, value } = params;
-  console.log("Filter Type: ", type);
-  console.log("Filter Value: ", value);
   const [books, setBooks] = useState<Book[] | null>(null);
   const [error, setError] = useState<string>('');
   const [authorName, setAuthorName] = useState<string>('');
@@ -30,7 +28,6 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
         if (type === 'category') {
           booksData = await getBooksByCategory(value, currentPage, booksPerPage);
           totalBooks = await getNumberBooksByCategory(value);
-          console.log("BooksData: ",booksData);
           if(booksData.length>0){
             setCategory(booksData[0].category)
           }
@@ -43,7 +40,6 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
           if(booksData.length>0){
             setAuthorName(booksData[0].author.penName);
           }
-          console.log("Author: ",value);
         } else if (type == 'rating') {
           booksData = await getBooksByRating(value);
           totalBooks = 0;

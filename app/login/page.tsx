@@ -22,9 +22,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      console.log('Despachando loginUser con:', { email, password }); // Console log
       const token = await dispatch(loginUser({ email, password })).unwrap();
-      console.log('Login exitoso, token:', token); // Console log
       router.push('/');
     } catch (err: any) {
       console.error('Error al hacer login:', err.message); // Console log

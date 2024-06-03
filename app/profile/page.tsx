@@ -30,8 +30,7 @@ export default function ProfilePage() {
   const authError = useAppSelector((state) => state.auth.error);
 
   useEffect(() => {
-    console.log(profile)
-    
+
     if (!token) {
       router.push('/login');
       return;

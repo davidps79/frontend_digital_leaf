@@ -12,7 +12,6 @@ const PayUResponse = () => {
       const queryParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(queryParams.entries());
     
-      console.log("SAPOOOOOOOOOOOOOO", params)
       try {
         await handlePayUResponse(params);
         

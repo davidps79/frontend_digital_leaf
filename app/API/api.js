@@ -123,7 +123,6 @@ export const getBooksInfo = async (bookId) => {
 
 export const getBooksByCategory = async (category, page, limit) => {
   try{
-    console.log("Categoria:",category);
     const response = await apiClient.get(`ebooks/category/${category}?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
@@ -133,7 +132,6 @@ export const getBooksByCategory = async (category, page, limit) => {
 
 export const getNumberBooksByCategory = async (category) => {
   try{
-    console.log("Categoria:",category);
     const response = await apiClient.get(`ebooks/category/amount/${category}`);
     return response.data;
   } catch (error) {
@@ -143,7 +141,6 @@ export const getNumberBooksByCategory = async (category) => {
 
 export const getBooksBySearch = async (keyword, page, limit) => {
   try{
-    console.log("Keyword:",keyword);
     const response = await apiClient.get(`ebooks/search/${keyword}?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
@@ -153,7 +150,6 @@ export const getBooksBySearch = async (keyword, page, limit) => {
 
 export const getNumberBooksBySearch = async (keyword) => {
   try{
-    console.log("Keyword:",keyword);
     const response = await apiClient.get(`ebooks/search/amount${keyword}`);
     return response.data;
   } catch (error) {
@@ -164,7 +160,6 @@ export const getNumberBooksBySearch = async (keyword) => {
 
 export const getBooksByAuthor = async (authorId, page, limit) => {
   try{
-    console.log("Autor: ",authorId);
     const response = await apiClient.get(`ebooks/author/${authorId}?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
@@ -174,7 +169,6 @@ export const getBooksByAuthor = async (authorId, page, limit) => {
 
 export const getNumberBooksByAuthor = async (authorId) => {
   try{
-    console.log("Autor: ",authorId);
     const response = await apiClient.get(`ebooks/author/${authorId}`);
     return response.data;
   } catch (error) {
@@ -184,7 +178,6 @@ export const getNumberBooksByAuthor = async (authorId) => {
 
 export const getBooksByAuthorAmount = async (amount,authorId) => {
   try{
-    console.log("Autor: ",authorId);
     const response = await apiClient.get(`ebooks/author/${authorId}?page=1&limit=${amount}`);
     return response.data;
   } catch (error) {
@@ -194,7 +187,6 @@ export const getBooksByAuthorAmount = async (amount,authorId) => {
 
 export const getBooksByCategoryAmount = async (amount,category) => {
   try{
-    console.log("Categoria:",category);
     const response = await apiClient.get(`ebooks/category/${category}?page=1&limit=${amount}`);
     return response.data;
   } catch (error) {
