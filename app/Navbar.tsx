@@ -77,15 +77,7 @@ const Navbar = () => {
                         </NavigationMenuItem>
 
                         <NavigationMenuItem>
-                            <Link href="/" legacyBehavior passHref>
-                                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                                    Recién llegados
-                                </NavigationMenuLink>
-                            </Link>
-                        </NavigationMenuItem>
-
-                        <NavigationMenuItem>
-                            <Link legacyBehavior href="/" passHref>
+                            <Link legacyBehavior href="/filter/rating/DESC" passHref>
                                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                                     Colección selecta
                                 </NavigationMenuLink>
@@ -118,10 +110,6 @@ const Navbar = () => {
             </div>
 
             <div className='flex gap-2 items-center'>
-                <Button variant="ghost">
-                    <IconBookmarks />
-                </Button>
-
                 <Button variant="ghost" onClick={handleOpenCart}>
                     <IconShoppingBag />
                 </Button>

@@ -32,6 +32,10 @@ const Page: React.FC<PageProps> = ({ params }) => {
         if (token) {
           const bought = await checkBookOwnership(userId, ebook.id);
           const isAuthor = await checkBookAuthor(userId, ebook.id);
+          console.log(userId + " userId")
+          console.log(ebook.id + " ebookId")
+          console.log(bought + " bought")
+          console.log(isAuthor + " isAuthor")
           ownsBook = bought || isAuthor;
         }
         
