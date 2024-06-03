@@ -105,7 +105,19 @@ export const getNumberBooks = async () => {
 
 export const getBookById = async (id) => {
   try {
+    console.log(id)
     const response = await apiClient.get(`ebooks/${id}`);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al obtener el libro:', id);
+  }
+};
+
+
+export const getBookByIdEhsi = async (id) => {
+  try {
+    console.log(id)
+    const response = await apiClient.get(`ebooks/info/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al obtener el libro:', id);
@@ -362,9 +374,11 @@ export const updateEbook = async (ebookId,data) => {
   }
 }
 
-export const updateUserAdmin = async (userId,data) => {
+export const updateUserAdmin = async (userId,updateData) => {
   try {
-    const response = await apiClient.patch(`/auth/${userId}`, data);
+    console.log(userId)
+    console.log(updateData)
+    const response = await apiClient.patch(`/auth/${userId}`, updateData);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al actualizar el usuario',userId);

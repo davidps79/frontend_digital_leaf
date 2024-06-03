@@ -1,9 +1,8 @@
 'use client';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { register, updateUser, getUserById, updateUserAdmin } from '../../../API/api';
-import { User, registerUser, updateUserProfile } from '@/redux/authSlice';
+import { useAppSelector } from '@/redux/hooks';
+import { getUserById, updateUserAdmin } from '../../../API/api';
 import LogoLoader from '@/app/LogoLoader';
 
 interface FormData {
@@ -17,8 +16,8 @@ interface FormData {
   biography: string;
 }
 
-const UserForm = ({ params }: { params?: { id?: string } }) => {
-  const id = params?.id;
+const UserForm = () => {
+  const { id } = useParams();
   const [userType, setUserType] = useState<string>('Reader');
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -36,40 +35,37 @@ const UserForm = ({ params }: { params?: { id?: string } }) => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState('');
 
-  
   useEffect(() => {
-
-    try{
-    if (user.role === "Admin") {
-    if (id) {
-      const fetchUser = async () => {
-        const userData = await getUserById(id);
-        setFormData({
-          username: userData.username,
-          password: '',
-          confirmPassword: '',
-          email: userData.email,
-          role: userData.role,
-          favoriteGenre: userData.favoriteGenre || '',
-          penName: userData.penName || '',
-          biography: userData.biography || '',
-        });
-        setUserType(userData.role);
+    console.log(id)
+    const fetchUser = async () => {
+      try {
+        if (user.role === "Admin") {
+          if (id) {
+            const userData = await getUserById(id);
+            setFormData({
+              username: userData.username,
+              password: '',
+              confirmPassword: '',
+              email: userData.email,
+              role: userData.role,
+              favoriteGenre: userData.favoriteGenre || '',
+              penName: userData.penName || '',
+              biography: userData.biography || '',
+            });
+            setUserType(userData.role);
+          }
+        } else {
+          router.push('/');
+        }
+      } catch (err) {
+        router.push('/login');
+      } finally {
         setLoading(false);
       }
-      fetchUser();
-    }
-  }else{
-    router.push('/');
-  }
-}catch(err){
-  if (err) {
-    router.push('/login');
-} 
-}
+    };
 
-
-  }, [id]);
+    fetchUser();
+  }, [id, user, router]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -97,28 +93,28 @@ const UserForm = ({ params }: { params?: { id?: string } }) => {
       setAuthError('Passwords do not match');
       return;
     }
+    const updateData={
+      username: formData.username,
+      password: formData.password,
+      email: formData.email,
+      role: formData.role,
+      favoriteGenre: formData.favoriteGenre,
+      penName: formData.penName,
+      biography: formData.biography,
+    }
+    console.log(updateData)
     try {
-      await updateUserAdmin({
-        id,
-        updateData: {
-          username: formData.username,
-          password: formData.password,
-          email: formData.email,
-          role: formData.role,
-          favoriteGenre: formData.favoriteGenre,
-          penName: formData.penName,
-          biography: formData.biography,
-        }
-      })
+      await updateUserAdmin(id, updateData);
       router.push('/admin/dashboard');
     } catch (err) {
+      setAuthError('Error updating user');
       console.error('Error details:', err);
     }
   };
 
   if (loading) {
     return <LogoLoader />;
-}
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">

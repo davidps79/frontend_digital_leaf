@@ -3,14 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { uploadEbook } from '@/crudEbok/uploadEbook';
-import { uploadEbookCover } from '@/app/crudImageEbook/uploadEbookCover';
+import { getBookById, getBookByIdEhsi, updateEbook } from '../../../API/api';
+import { uploadEbookCover } from '../../../crudImageEbook/uploadEbookCover';
 import { addNewEbook } from '@/redux/authSlice';
-import { updateEbook, getBookById } from '@/app/API/api';
-import { InfoEbookDto } from '@/lib/ebook';
-import LogoLoader from '@/app/LogoLoader';
+import LogoLoader from '../../../LogoLoader';
 
-const BookForm: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const CreateEbookPage: React.FC = () => {
+  const { id } = useParams();
+  const authorId = useAppSelector((state) => state.auth.user?.id);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = useAppSelector((state) => state.auth.token);
@@ -21,54 +21,47 @@ const BookForm: React.FC = () => {
     price: '',
     stock: '',
     fileData: null as File | null,
+    numVotes: 0,
     isbn: '',
     version: '',
-    rating: '',
+    rating: 0,
     category: '',
     ebookCover: null as File | null,
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
-    const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
-  
-
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (token) {
-        if (user.role === "Admin") {
+    if (!token) {
+      router.push('/login');
+    } else {
+      if (id) {
+        const fetchEbook = async () => {
           try {
-            const ebookData = await getBookById(id);
+            const ebook = await getBookByIdEhsi(id);
             setFormData({
-              title: ebookData.title,
-              publisher: ebookData.publisher,
-              overview: ebookData.overview,
-              price: ebookData.price,
-              stock: ebookData.stock,
+              title: ebook.title,
+              publisher: ebook.publisher,
+              overview: ebook.overview,
+              price: ebook.price.toString(),
+              stock: ebook.stock.toString(),
               fileData: null,
-              isbn: ebookData.isbn,
-              version: ebookData.version,
-              rating: ebookData.rating,
-              category: ebookData.category,
+              numVotes: ebook.numVotes,
+              isbn: ebook.isbn,
+              version: ebook.version,
+              rating: ebook.rating,
+              category: ebook.category,
               ebookCover: null,
             });
-            
-          } catch (err) {
-            if (err) {
-              router.push('/login');
-          } 
+          } catch (error) {
+            setError('Error fetching eBook data');
           }
-        }else{
-          router.push('/');
-        }
-      } else {
-        router.push('/login');
+        };
+        fetchEbook();
       }
       setLoading(false);
-    };
-
-    fetchData();
-  }, [token, router, id]);
+    }
+  }, [id, token, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -102,33 +95,30 @@ const BookForm: React.FC = () => {
       const dataEbook = formData.fileData ? await uploadEbook(formData.title, formData.fileData) : null;
       const dataCover = formData.ebookCover ? await uploadEbookCover(formData.ebookCover) : null;
 
-      const ebookData: InfoEbookDto = {
-        id: id || '',
+      const ebookData = {
         title: formData.title,
         publisher: formData.publisher,
-        author: { id: '', name: '' }, // Asignar los valores reales del autor
+        authorId: authorId,
         overview: formData.overview,
-        price: parseFloat(formData.price) || 0,
-        stock: parseInt(formData.stock) || 0,
-        fileUrl: dataEbook ? dataEbook.path : '',
-        isbn: formData.isbn || '',
-        version: formData.version || '',
-        rating: parseInt(formData.rating) || 0,
-        category: formData.category || '',
-        ebookCover: dataCover ? dataCover.path : '',
-        numVotes: 0
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        fileData: dataEbook ? dataEbook.path : undefined,
+        isbn: formData.isbn,
+        version: formData.version,
+        rating: formData.rating,
+        category: formData.category,
+        ebookCover: dataCover ? dataCover.path : undefined,
       };
 
       if (id) {
-        await updateEbook({ token, ebookData });
+        await updateEbook(id, ebookData);
       } else {
         await dispatch(addNewEbook({ token, ebookData })).unwrap();
       }
-
-      router.push('/admin/dashboard');
+      router.push('/profile');
     } catch (err: any) {
-      if (err === 'Unauthorized') {
-        router.push('/');
+      if (err.message === 'Unauthorized') {
+        router.push('/login');
       } else if (err.message === 'The resource already exists') {
         setError('An ebook with this title already exists. Please choose a different title.');
       } else {
@@ -144,7 +134,7 @@ const BookForm: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="w-full max-w-2xl p-8 space-y-8 bg-white shadow-md rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-bold text-center text-gray-900">{id ? 'Edit eBook' : 'Create New eBook'}</h2>
+        <h2 className="text-2xl font-bold text-center text-gray-900">{id ? 'Update eBook' : 'Create New eBook'}</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
@@ -252,11 +242,11 @@ const BookForm: React.FC = () => {
                 onChange={handleChange}
               >
                 <option value="">Select a category</option>
-                <option value="Fantasia">Fantasia</option>
+                <option value="Fantasía">Fantasia</option>
                 <option value="Comedia">Comedia</option>
                 <option value="Horror">Horror</option>
                 <option value="Historia">Historia</option>
-                <option value="Ciencia Ficcion">Ciencia Ficcion</option>
+                <option value="Ciencia ficción">Ciencia Ficcion</option>
                 <option value="Romance">Romance</option>
                 <option value="Misterio">Misterio</option>
               </select>
@@ -282,7 +272,7 @@ const BookForm: React.FC = () => {
             <button
               type="button"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              onClick={() => router.push('/admin/dashboard')}
+              onClick={() => router.push('/profile')}
             >
               Cancel
             </button>
@@ -293,4 +283,4 @@ const BookForm: React.FC = () => {
   );
 };
 
-export default BookForm;
+export default CreateEbookPage;

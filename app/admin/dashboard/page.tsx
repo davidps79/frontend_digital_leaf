@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { getAllUsers, deleteUser, getBooks, deleteBook } from '../../API/api'; // Asegúrate de tener estos métodos en tu API
+import { getAllUsers, deleteUser, getBooks, deleteBook } from '../../API/api'; 
 import { User } from '@/redux/authSlice';
 import { Book } from '@/lib/book';
 import { useRouter } from 'next/navigation';
@@ -73,7 +73,7 @@ const AdminDashboard = () => {
     };
 
     const handleEditBook = (bookId: string) => {
-        router.push(`/admin/bookForm/${bookId}`);
+        router.push(`/admin/updateBookForm/${bookId}`);
     };
 
     const handleCreateUser = () => {
