@@ -1,13 +1,12 @@
 import React, { Suspense } from 'react';
 import EpubReader from '../../EpubReader';
-import LogoLoader from '@/app/LogoLoader';
 
-const Page = ({params}) => {
+const Page = ({ params }) => {
     return (
-        <div className="w-full h-[80vh]">
-            <Suspense fallback={<LogoLoader/>}>
+        <div className='flex flex-col w-full h-full justify-center'>
+            <div className="w-full h-[80vh]">
                 <EpubReader ebookId={params.id} />
-            </Suspense>
+            </div>
         </div>
     )
 }
