@@ -22,7 +22,7 @@ const SameCategorySection = ({ category }: { category: string }) => {
                 const booksData = await getBooksByCategoryAmount(6, category);
                 setBooks(booksData);
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         };
 

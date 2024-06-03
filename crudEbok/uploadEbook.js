@@ -1,7 +1,6 @@
 import supabase from "@/app/supabaseConfig/supabaseClient";
 
 export async function uploadEbook(title,fileData){
-    console.log("Archivo",fileData);
     const { data, error } = await supabase
     .storage
     .from('ebooks-bucket')

@@ -7,9 +7,8 @@ export async function downloadEbookCover(imagePath){
     .download(`${imagePath}`);
 
     if(error){
-        console.log('Error al obtener la imagen ', error)
+        console.error('Error al obtener la imagen ', error)
         return null;
     }
-    console.log(data);
     return data;
 }

@@ -24,7 +24,7 @@ const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
                 const booksData = await getBooksByAuthorAmount(6, author.id);
                 setBooks(booksData);
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         };
 
