@@ -9,6 +9,7 @@ import { InfoEbookDto } from '@/lib/ebook';
 import LogoLoader from '../LogoLoader';
 
 const CreateEbookPage: React.FC = () => {
+  const authorId = useAppSelector((state) => state.auth.profile?.author?.id );
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = useAppSelector((state) => state.auth.token);
@@ -69,22 +70,19 @@ const CreateEbookPage: React.FC = () => {
       const dataEbook = await uploadEbook(formData.title, formData.fileData);
       const dataCover = await uploadEbookCover(formData.ebookCover);
 
-      const ebookData: InfoEbookDto = {
-        id: '',
+      const ebookData = {
         title: formData.title,
         publisher: formData.publisher,
-        author: { id: '', name: '' }, // Asignar los valores reales del autor
+        authorId: authorId, 
         overview: formData.overview,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
-        fileUrl: dataEbook.path,
+        fileData: dataEbook.path,
         isbn: formData.isbn,
         version: formData.version,
-        numVotes: formData.numVotes,
         rating: formData.rating,
         category: formData.category,
         ebookCover: dataCover.path,
-        numVotes: 0
       };
 
       await dispatch(addNewEbook({ token, ebookData })).unwrap();
