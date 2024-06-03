@@ -79,3 +79,8 @@
 .navbar-item {
   @apply transition-all hover:underline underline-offset-1 cursor-pointer
 }
+
+main, html, body {
+  @apply
+  min-h-screen
+} 

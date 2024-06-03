@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { fetchUserProfile, logout, updateUserProfile } from '@/redux/authSlice';
 import { IconUser, IconBook, IconAt, IconEdit, IconLogout } from '@tabler/icons-react';
 import UserBooksSection from '../UserBooksSection'
+import LogoLoader from '../LogoLoader';
 
 interface FormData {
   username: string;
@@ -117,7 +118,7 @@ export default function ProfilePage() {
   }
 
   if (authStatus === 'loading' || !user || !profile) {
-    return <div className="text-center">Loading...</div>;
+    return <LogoLoader/>
   }
 
   return (

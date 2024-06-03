@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/carousel"
 
 const SameCategorySection = ({ category }: { category: string }) => {
-    const [books, setBooks] = useState<Book[]>([]);
+    const [books, setBooks] = useState<Book[]|null>(null);
 
     useEffect(() => {
         const fetchBooks = async () => {
@@ -32,9 +32,10 @@ const SameCategorySection = ({ category }: { category: string }) => {
     return (
         <div className='space-y-6 col-span-2'>
             <meta charSet="UTF-8" />
+
             <div className='flex w-full justify-between'>
                 <h2 className='font-bold text-xl'>Más libros de {category}</h2>
-                <Link href={`/filter/category/${encodeURIComponent(category)}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
+                <Link href={`/filter/author/${encodeURIComponent(category)}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
             </div>
 
             {
@@ -57,9 +58,15 @@ const SameCategorySection = ({ category }: { category: string }) => {
                         <CarouselNext />
                     </Carousel>
                     :
-                    Array(4).fill(0).map((_) => <EbookCardLoader />)
+                    <div className='grid grid-cols-4 gap-4'>
+                        {
+                            Array(4).fill(0).map((_) => (
+                                <EbookCardLoader />
+                            ))
+                        }
+                    </div>
             }
-        </div>
+        </div >
     )
 }
 

@@ -9,6 +9,7 @@ import SameCategorySection from '@/app/SameCategorySection';
 import { Sheet, } from "@/components/ui/sheet"
 import { useAppSelector } from '@/redux/hooks';
 import { notFound } from 'next/navigation';
+import LogoLoader from '@/app/LogoLoader';
 
 interface PageProps {
   params: {
@@ -43,7 +44,7 @@ const Page: React.FC<PageProps> = ({ params }) => {
     fetchEbookInfo();
   }, []);
 
-  if (!data) return <>loading..</>
+  if (!data) return <LogoLoader/>
 
   return (
     <Sheet>

@@ -5,6 +5,7 @@ import { getBooks } from './API/api';
 import { Book } from '@/lib/book';
 import EbookCard from './EbookCard';
 import { getNumberBooks } from './API/api';
+import LogoLoader from './LogoLoader';
 
 export default function HomePage() {
   const booksPerPage = 12;
@@ -38,7 +39,7 @@ export default function HomePage() {
   }
 
   if (!books) {
-    return <div className="text-center">Loading...</div>;
+    return <LogoLoader/>
   }
 
   if (books.length == 0) {

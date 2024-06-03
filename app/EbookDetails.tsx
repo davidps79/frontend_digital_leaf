@@ -13,9 +13,6 @@ const EbookDetails = ({ ebook, ownsBook }: { ebook: InfoEbookDto, ownsBook: bool
     const [currentEbook, setCurrentEbook] = useState(ebook);
 
     const handleRatingSubmit = (ratingg: number, votesCount: number) => {
-        console.log(ratingg);
-        console.log(votesCount);
-
         setCurrentEbook({
             ...currentEbook,
             rating: ratingg,

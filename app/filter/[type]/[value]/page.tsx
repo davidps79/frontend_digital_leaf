@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import EbookCard from '../../../EbookCard';
 import { Book } from '@/lib/book';
 import { getBooksByAuthor, getBooksByCategory, getBooksByRating, getBooksBySearch, getNumberBooksByCategory, getNumberBooksBySearch, getNumberBooksByAuthor, getNumberBooksByRating } from '@/app/API/api';
+import LogoLoader from '@/app/LogoLoader';
 
 const FilterPage = ({ params }: { params: { type: string, value: string } }) => {
   const router = useRouter();
@@ -73,7 +74,7 @@ const FilterPage = ({ params }: { params: { type: string, value: string } }) => 
   }
 
   if(!books){
-    return <div className="text-center">Loading...</div>;
+    return <LogoLoader/>
   }
 
   if(books.length==0){

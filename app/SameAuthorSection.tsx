@@ -33,6 +33,8 @@ const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
 
     return (
         <div className='space-y-6 col-span-2'>
+            <meta charSet="UTF-8" />
+
             <div className='flex w-full justify-between'>
                 <h2 className='font-bold text-xl'>Más libros de {author.name}</h2>
                 <Link href={`/filter/author/${author.id}`} className='underline underline-offset-1 font-semibold'>ver todos</Link>
@@ -58,7 +60,13 @@ const SameAuthorSection = ({ author }: { author: AuthorInfoDto }) => {
                         <CarouselNext />
                     </Carousel>
                     :
-                    Array(4).fill(0).map((_) => <EbookCardLoader />)
+                    <div className='grid grid-cols-4 gap-4'>
+                        {
+                            Array(4).fill(0).map((_) => (
+                                <EbookCardLoader />
+                            ))
+                        }
+                    </div>
             }
         </div >
     )
