@@ -41,7 +41,7 @@ const EbookDetails = ({ ebook, ownsBook }: { ebook: InfoEbookDto, ownsBook: bool
                     {
                         ownsBook ?
                             (<div className='flex flex-col gap-2 w-full pt-6'>
-                                <Button onClick={() => "/viewer/" + ebook.id} variant="default" size="lg" className='w-full'>
+                                <Button onClick={() => router.push("/viewer/" + ebook.id)} variant="default" size="lg" className='w-full'>
                                     Leer Libro
                                 </Button>
                             </div>) :

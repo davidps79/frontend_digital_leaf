@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Sheet,
     SheetContent
@@ -21,7 +21,8 @@ const SideCart = () => {
     const dispatch = useAppDispatch();
     const token = useAppSelector((state: RootState) => state.auth.token);
     const router = useRouter();
-
+    const [loading, setLoading] = useState(false);
+    
     useEffect(() => {
         if (isCartOpen && token) {
             dispatch(fetchShoppingCart());

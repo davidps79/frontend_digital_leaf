@@ -165,6 +165,7 @@ export const addNewEbook = createAsyncThunk(
       if (error.response && error.response.status === 401) {
         return rejectWithValue('Unauthorized');
       }
+      console.error(error.message);
       return rejectWithValue(error.message);
     }
   }
