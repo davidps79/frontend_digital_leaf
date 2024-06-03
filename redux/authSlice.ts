@@ -52,8 +52,17 @@ export const loginUser = createAsyncThunk(
     const user = await getUserById(userId, response.access_token);
     localStorage.setItem('user', JSON.stringify(user));
 
-    const profile = await getAuthorProfile(userId);
+    let profile;
+
+    if(user.role == "Author"){
+    profile = await getAuthorProfile(userId);
     localStorage.setItem('profile', JSON.stringify(profile));
+    }else if (user.role == "Reader"){
+      profile = await getReaderProfile(userId);
+    localStorage.setItem('profile', JSON.stringify(profile));
+    }
+
+    console.log(profile)
 
     return { token: response.access_token, user, profile };
   }
@@ -77,8 +86,15 @@ export const registerUser = createAsyncThunk(
     const user = await getUserById(userId, response.access_token);
     localStorage.setItem('user', JSON.stringify(user));
 
-    const profile = await getAuthorProfile(userId);
+    let profile;
+
+    if(user.role == "Author"){
+    profile = await getAuthorProfile(userId);
     localStorage.setItem('profile', JSON.stringify(profile));
+    }else if (user.role == "Reader"){
+      profile = await getReaderProfile(userId);
+    localStorage.setItem('profile', JSON.stringify(profile));
+    }
 
     return { token: response.access_token, user, profile };
   }
@@ -191,6 +207,7 @@ const authSlice = createSlice({
       state.cart = [];
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('profile');
     },
   },
   extraReducers: (builder) => {

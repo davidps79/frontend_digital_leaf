@@ -4,6 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { register, updateUser, getUserById } from '../../../API/api';
 import { User, registerUser } from '@/redux/authSlice';
+import LogoLoader from '@/app/LogoLoader';
 
 interface FormData {
   username: string;
@@ -33,8 +34,11 @@ export default function UserForm() {
   const router = useRouter();
   const authStatus = useAppSelector((state) => state.auth.status);
   const authError = useAppSelector((state) => state.auth.error);
+  const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (user.role === "Admin") {
     if (id) {
       const fetchUser = async () => {
         const userData = await getUserById(id);
@@ -49,9 +53,13 @@ export default function UserForm() {
           biography: userData.biography || '',
         });
         setUserType(userData.role);
+        setLoading(false);
       }
       fetchUser();
     }
+  }else{
+    router.push('/');
+  }
   }, [id]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -95,6 +103,10 @@ export default function UserForm() {
       console.error('Error details:', err);
     }
   };
+
+  if (loading) {
+    return <LogoLoader />;
+}
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
