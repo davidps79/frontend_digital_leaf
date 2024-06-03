@@ -71,7 +71,6 @@ const EpubReader = ({ ebookId }: { ebookId: string }) => {
                 locationChanged={(epubcfi: string) => {
                     setLocation(epubcfi)
 
-                    console.log(epubcfi)
                     const newV = new Set(visited)
                     newV.add(epubcfi)
                     setVisited(newV)
