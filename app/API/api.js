@@ -361,3 +361,12 @@ export const updateEbook = async (ebookId,data) => {
     throw new Error(error.response?.data?.message || 'Error al actualizar el ebook',ebookId);
   }
 }
+
+export const updateUserAdmin = async (userId,data) => {
+  try {
+    const response = await apiClient.patch(`/auth/${userId}`, data);
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Error al actualizar el usuario',userId);
+  }
+}

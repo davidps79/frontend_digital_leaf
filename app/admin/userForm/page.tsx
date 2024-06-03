@@ -1,10 +1,9 @@
 'use client';
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, ChangeEvent, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { register, updateUser, getUserById } from '../../../API/api';
-import { User, registerUser } from '@/redux/authSlice';
-import LogoLoader from '@/app/LogoLoader';
+import { registerUser } from '@/redux/authSlice';
+import { register } from '@/app/API/api';
 
 interface FormData {
   username: string;
@@ -18,8 +17,8 @@ interface FormData {
 }
 
 export default function UserForm() {
-  const { id } = useParams<{ id: string }>();
   const [userType, setUserType] = useState<string>('Reader');
+  const [authError, setAuthError] = useState('');
   const [formData, setFormData] = useState<FormData>({
     username: '',
     password: '',
@@ -32,35 +31,7 @@ export default function UserForm() {
   });
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const authStatus = useAppSelector((state) => state.auth.status);
-  const authError = useAppSelector((state) => state.auth.error);
-  const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user.role === "Admin") {
-    if (id) {
-      const fetchUser = async () => {
-        const userData = await getUserById(id);
-        setFormData({
-          username: userData.username,
-          password: '',
-          confirmPassword: '',
-          email: userData.email,
-          role: userData.role,
-          favoriteGenre: userData.favoriteGenre || '',
-          penName: userData.penName || '',
-          biography: userData.biography || '',
-        });
-        setUserType(userData.role);
-        setLoading(false);
-      }
-      fetchUser();
-    }
-  }else{
-    router.push('/');
-  }
-  }, [id]);
+ 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -85,34 +56,23 @@ export default function UserForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      setAuthError('Passwords do not match');
       return;
     }
     try {
-        await dispatch(registerUser({
-            username: formData.username,
-            password: formData.password,
-            email: formData.email,
-            role: formData.role,
-            favoriteGenre: formData.favoriteGenre,
-            penName: formData.penName,
-            biography: formData.biography,
-          })).unwrap();
+      await register(formData);
       router.push('/admin/dashboard');
     } catch (err) {
-      console.error('Error details:', err);
+      if (err) {
+        setAuthError(err + "")
+        //router.push('/login');
+    } 
     }
   };
-
-  if (loading) {
-    return <LogoLoader />;
-}
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white shadow-md rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-bold text-center text-gray-900">{id ? 'Edit User' : 'Register User'}</h2>
-        {authStatus === 'failed' && <p className="text-red-500 text-center">{authError}</p>}
+        <h2 className="text-2xl font-bold text-center text-gray-900">Register</h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <div>
@@ -162,7 +122,7 @@ export default function UserForm() {
                 name="password"
                 type="password"
                 autoComplete="current-password"
-                required={!id}
+                required
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Password"
                 value={formData.password}
@@ -175,7 +135,7 @@ export default function UserForm() {
                 id="confirmPassword"
                 name="confirmPassword"
                 type="password"
-                required={!id}
+                required
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
@@ -235,12 +195,16 @@ export default function UserForm() {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {id ? 'Update' : 'Sign up'}
+              Sign up
             </button>
+          </div>
+          <div className="flex items-center justify-center text-sm">
+            <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+              I have an account
+            </a>
           </div>
         </form>
         {authError && <p className="text-red-500 text-center mt-2">{authError}</p>}
-        {authStatus === 'loading' && <p className="text-center mt-2">Loading...</p>}
       </div>
     </div>
   );
@@ -249,3 +213,4 @@ export default function UserForm() {
 function setError(arg0: string) {
   throw new Error('Function not implemented.');
 }
+

@@ -5,8 +5,8 @@ import { User } from '@/redux/authSlice';
 import { Book } from '@/lib/book';
 import { useRouter } from 'next/navigation';
 import LogoLoader from '@/app/LogoLoader';
-import { InfoEbookDto } from '@/lib/ebook';
 import { useAppSelector } from '@/redux/hooks';
+import { AxiosError } from 'axios';
 
 const AdminDashboard = () => {
     const [users, setUsers] = useState<User[] | null>(null);
@@ -16,9 +16,6 @@ const AdminDashboard = () => {
 
     const token = useAppSelector((state) => state.auth.token);
     const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
-  
-
-    
 
     useEffect(() => {
         async function fetchData() {
@@ -30,29 +27,49 @@ const AdminDashboard = () => {
                         const booksData = await getBooks(1, 20);
                         setBooks(booksData);
                         setLoading(false);
-                      }else{
+                    } else {
                         router.push('/');
-                      }
+                    }
+                } else {
+                    router.push('/login');
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
-            } 
+                if (error) {
+                    router.push('/login');
+                } 
+            }
         }
         fetchData();
-    }, []);
+    }, [token, user, router]);
 
     const handleDeleteUser = async (userId: string) => {
-        await deleteUser(userId);
-        setUsers(users?.filter(user => user.id !== userId) || null);
+        try {
+            await deleteUser(userId);
+            setUsers(users?.filter(user => user.id !== userId) || null);
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.status === 401) {
+                router.push('/login');
+            } else {
+                console.error('Error deleting user:', error);
+            }
+        }
     };
 
     const handleDeleteBook = async (bookId: string) => {
-        await deleteBook(bookId);
-        setBooks(books?.filter(book => book.id !== bookId) || null);
+        try {
+            await deleteBook(bookId);
+            setBooks(books?.filter(book => book.id !== bookId) || null);
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.status === 401) {
+                router.push('/login');
+            } else {
+                console.error('Error deleting book:', error);
+            }
+        }
     };
 
     const handleEditUser = (userId: string) => {
-        router.push(`/admin/form/${userId}`);
+        router.push(`/admin/updateUserForm/${userId}`);
     };
 
     const handleEditBook = (bookId: string) => {
@@ -60,7 +77,7 @@ const AdminDashboard = () => {
     };
 
     const handleCreateUser = () => {
-        router.push('/admin/form/');
+        router.push('/admin/userForm/');
     };
 
     const handleCreateBook = () => {

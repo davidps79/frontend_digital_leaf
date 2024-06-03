@@ -19,7 +19,7 @@ export interface Profile {
 }
 
 interface AuthState {
-  token: string | null;
+  token: string | '';
   user: User | null;
   profile: Profile | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -29,7 +29,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
+  token: typeof window !== 'undefined' ? (localStorage.getItem('token') || '') : '',
   user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null,
   profile:  typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('profile') || 'null') : null,
   status: 'idle',
@@ -151,7 +151,7 @@ export const updateUserProfile = createAsyncThunk(
         }
         return rejectWithValue(error.response?.data?.message || error.message);
       }
-      return rejectWithValue('An unknown error occurred');
+      return rejectWithValue(error);
     }
   }
 );
@@ -199,7 +199,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.token = null;
+      state.token = '';
       state.user = null;
       state.profile = null;
       state.status = 'idle';
@@ -286,7 +286,7 @@ const authSlice = createSlice({
       .addCase(verifyToken.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload as string;
-        state.token = null;
+        state.token = '';
         state.user = null;
         state.profile = null;
         localStorage.removeItem('token');

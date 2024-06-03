@@ -54,7 +54,9 @@ const BookForm: React.FC = () => {
             });
             
           } catch (err) {
-            setError('Error fetching ebook data');
+            if (err) {
+              router.push('/login');
+          } 
           }
         }else{
           router.push('/');
