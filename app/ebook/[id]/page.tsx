@@ -23,6 +23,7 @@ const Page: React.FC<PageProps> = ({ params }) => {
   const token = useAppSelector((state) => state.auth.token);
   const authorId = useAppSelector((state) => state.auth.profile?.author?.id );
   const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
+  const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
 
   useEffect(() => {
     const fetchEbookInfo = async () => {
@@ -33,7 +34,8 @@ const Page: React.FC<PageProps> = ({ params }) => {
         if (token) {
           const bought = userId? await checkBookOwnership(userId, ebook.id) : false;
           const isAuthor = authorId? await checkBookAuthor(authorId, ebook.id) : false;
-          ownsBook = bought || isAuthor;
+          const isAdmin = user.role === "Admin"
+          ownsBook = bought || isAuthor || isAdmin;
         }
         
         setData({ ebook, ownsBook });

@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { uploadEbook } from '@/crudEbok/uploadEbook';
 import { uploadEbookCover } from '../../crudImageEbook/uploadEbookCover';
-import { addNewEbook } from '@/redux/authSlice';
+
 import { InfoEbookDto } from '@/lib/ebook';
 import LogoLoader from '../../LogoLoader';
+import { addNewEbook } from '@/redux/authSlice';
 
 const CreateEbookPage: React.FC = () => {
-  const authorId = useAppSelector((state) => state.auth.user?.id );
+  const authorId = "66d06d5e-ff1e-4963-8199-ab88599876a8";
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = useAppSelector((state) => state.auth.token);
@@ -85,8 +86,8 @@ const CreateEbookPage: React.FC = () => {
         ebookCover: dataCover.path,
       };
       console.log(ebookData)
-      await dispatch(addNewEbook({ token, ebookData })).unwrap();
-      router.push('/profile');
+      await dispatch(addNewEbook({ ebookData,token }))
+      router.push('/admin/dashboard');
     } catch (err: any) {
       if (err === 'Unauthorized') {
         router.push('/login');

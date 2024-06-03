@@ -1,7 +1,7 @@
 'use client';
 import React, { useContext, useState } from 'react'
 import Image from 'next/image'
-import { IconUser, IconBookmarks, IconSearch, IconShoppingBag } from '@tabler/icons-react'
+import { IconUser, IconBookmarks, IconSearch, IconShoppingBag, IconAlignJustified, IconEdit } from '@tabler/icons-react'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
@@ -26,6 +26,8 @@ const Navbar = () => {
     const [search, setSearch] = useState('');
     const router = useRouter();
     const token = useAppSelector((state) => state.auth.token);
+    const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
+
 
     const handleSearchClick = () => {
         if (search) {
@@ -52,6 +54,29 @@ const Navbar = () => {
             router.push("/profile")
         }
     };
+
+    const handleAdminProfile = () => {
+        if (!token) {
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión para acceder al perfil");
+        } if(user.role != null && user.role === 'Admin '){
+            showAlertDialog("No eres administrador", "Debes ser admin para ingresar");
+        }else {
+            router.push("/admin/profile")
+        }
+    };
+
+    const handleAdminDashboard = () => {
+        if (!token) {
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión para acceder al perfil");
+        }
+        console.log(user.role,"POO") 
+        if(user.role != null && user.role === 'Admin '){
+            showAlertDialog("No eres administrador", "Debes ser admin para ingresar");
+        }else {
+            router.push("/admin/dashboard")
+        }
+    };
+
 
     return (
         <div className="z-50 w-full h-[4.5rem]  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
@@ -109,15 +134,26 @@ const Navbar = () => {
                 </Button>
             </div>
 
-            <div className='flex gap-2 items-center'>
-                <Button variant="ghost" onClick={handleOpenCart}>
-                    <IconShoppingBag />
-                </Button>
+            {user?.role != null && user.role === 'Admin' ? (
+                <div className='flex gap-2 items-center'>
+                    <Button variant="ghost" onClick={handleAdminDashboard}>
+                        <IconEdit />
+                    </Button>
+                    <Button variant="ghost" onClick={handleAdminProfile}>
+                        <IconUser />
+                    </Button>
+                </div>
+            ) : (
+                <div className='flex gap-2 items-center'>
+                    <Button variant="ghost" onClick={handleOpenCart}>
+                        <IconShoppingBag />
+                    </Button>
+                    <Button variant="ghost" onClick={handleProfile}>
+                        <IconUser />
+                    </Button>
+                </div>
+            )}
 
-                <Button variant="ghost" onClick={handleProfile}>
-                    <IconUser />
-                </Button>
-            </div>
         </div>
     )
 }

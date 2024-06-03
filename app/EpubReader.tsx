@@ -19,7 +19,9 @@ const EpubReader = ({ ebookId }: { ebookId: string }) => {
     const [visited, setVisited] = useState(new Set());
     const authorId = useAppSelector((state) => state.auth.profile?.author?.id );
     const userId = useAppSelector((state) => state.auth.user?.id) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}').id : null);
+    const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
 
+    
     useEffect(() => {
         const fetchEbook = async () => {
             const ebook: InfoEbookDto = await getBooksInfo(ebookId);
@@ -40,7 +42,8 @@ const EpubReader = ({ ebookId }: { ebookId: string }) => {
             if (token) {
                 const bought = userId? await checkBookOwnership(userId, ebook.id) : false;
                 const isAuthor = authorId? await checkBookAuthor(authorId, ebook.id) : false;
-                ownsBook = bought || isAuthor;
+                const isAdmin = user.role === "Admin"
+                ownsBook = bought || isAuthor || isAdmin;
             }
 
             setEbook({ buffer, ownsBook, title: ebook.title });

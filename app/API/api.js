@@ -73,6 +73,7 @@ export const updateUser = async (id, updateData, token) => {
 
 export const addEbook = async (ebookData, token) => {
   try {
+    console.log("aaaaaaaaaaaaaaaaa",ebookData)
     const response = await apiClient.post('ebooks', ebookData,{
       headers: {
         Authorization: `Bearer ${token}`,
@@ -367,7 +368,7 @@ export const deleteUser = async (userId) => {
 
 export const updateEbook = async (ebookId,data) => {
   try {
-    const response = await apiClient.patch(`/ebooks/${ebookId}`, data);
+    const response = await apiClient.patch(`/ebooks/visualize/${ebookId}`, data);
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al actualizar el ebook',ebookId);

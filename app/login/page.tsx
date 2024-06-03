@@ -12,7 +12,6 @@ export default function LoginPage() {
   const router = useRouter();
   const authError = useAppSelector((state) => state.auth.error);
   const authStatus = useAppSelector((state) => state.auth.status);
-  const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +24,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       const token = await dispatch(loginUser({ email, password })).unwrap();
-      if(user.role === 'Admin'){
+      if(token.user.role === 'Admin'){
         router.push('/admin/dashboard');
       }else{
       router.push('/');
@@ -73,25 +72,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-                Remember me
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                Forgot your password?
-              </a>
-            </div>
-          </div>
+          
 
           <div>
             <button

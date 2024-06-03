@@ -110,12 +110,9 @@ const CreateEbookPage: React.FC = () => {
         ebookCover: dataCover ? dataCover.path : undefined,
       };
 
-      if (id) {
         await updateEbook(id, ebookData);
-      } else {
-        await dispatch(addNewEbook({ token, ebookData })).unwrap();
-      }
-      router.push('/profile');
+      
+      router.push('/admin/dashboard');
     } catch (err: any) {
       if (err.message === 'Unauthorized') {
         router.push('/login');
