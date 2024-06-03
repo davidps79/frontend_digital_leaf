@@ -4,11 +4,11 @@ export async function uploadEbook(title,fileData){
     const { data, error } = await supabase
     .storage
     .from('ebooks-bucket')
-    .upload(`${title}.pdf`, fileData);
+    .upload(`${title}.epub`, fileData);
 
     if (error) {
         console.error("Error details:",error);
-        throw new Error(`Failed to upload PDF: ${error.message}`);
+        throw new Error(`Failed to upload EPUB: ${error.message}`);
     }
 
     return data;
