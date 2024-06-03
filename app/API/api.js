@@ -71,9 +71,13 @@ export const updateUser = async (id, updateData, token) => {
   }
 };
 
-export const addEbook = async (token, ebookData) => {
+export const addEbook = async (ebookData, token) => {
   try {
-    const response = await apiClient.post('ebooks', ebookData);
+    const response = await apiClient.post('ebooks', ebookData,{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Error al añadir un nuevo ebook');

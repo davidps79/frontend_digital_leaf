@@ -9,7 +9,7 @@ import { InfoEbookDto } from '@/lib/ebook';
 import LogoLoader from '../LogoLoader';
 
 const CreateEbookPage: React.FC = () => {
-  const authorId = useAppSelector((state) => state.auth.profile?.author?.id );
+  const authorId = useAppSelector((state) => state.auth.user?.id );
   const dispatch = useAppDispatch();
   const router = useRouter();
   const token = useAppSelector((state) => state.auth.token);
@@ -84,7 +84,7 @@ const CreateEbookPage: React.FC = () => {
         category: formData.category,
         ebookCover: dataCover.path,
       };
-
+      console.log(ebookData)
       await dispatch(addNewEbook({ token, ebookData })).unwrap();
       router.push('/profile');
     } catch (err: any) {
@@ -214,11 +214,11 @@ const CreateEbookPage: React.FC = () => {
                 onChange={handleChange}
               >
                 <option value="">Select a category</option>
-                <option value="Fantasia">Fantasia</option>
+                <option value="Fantasía">Fantasia</option>
                 <option value="Comedia">Comedia</option>
                 <option value="Horror">Horror</option>
                 <option value="Historia">Historia</option>
-                <option value="Ciencia Ficcion">Ciencia Ficcion</option>
+                <option value="Ciencia ficción">Ciencia Ficcion</option>
                 <option value="Romance">Romance</option>
                 <option value="Misterio">Misterio</option>
               </select>
