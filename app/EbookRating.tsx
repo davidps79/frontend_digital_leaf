@@ -3,7 +3,6 @@ import { InfoEbookDto } from '@/lib/ebook';
 
 import Rating from './Rating';
 import { useAppSelector } from '@/redux/hooks';
-import {  checkBookOwnership } from './API/api';
 import { AlertDialogContext } from './AlertDialogProvider';
 import { Dialog } from '@/components/ui/dialog';
 import RatingPopup from './RatingPopup';
@@ -15,7 +14,7 @@ const EbookRating: React.FC<{ ownsBook: boolean; ebook: InfoEbookDto; onRatingSu
 
     const togglePopup = async () => {
         if (!token) {
-            showAlertDialog("Inicia sesión", "Debes iniciar sesión en una cuenta para puntuar un libro");
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión para puntuar un libro");
         } else {
             if (ownsBook) {
                 setOpen(true)

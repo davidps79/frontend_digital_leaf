@@ -10,13 +10,16 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
+    AlertDialogCancel,
 } from "@/components/ui/alert-dialog"
+import { useRouter } from 'next/navigation';
 
 export const AlertDialogContext = createContext<any>(null);
 
 const AlertDialogProvider = ({ children }: { children: React.ReactNode }) => {
     const [alert, setAlert] = useState<{ title: string, content: string } | null>(null);
     const [open, setOpen] = useState<boolean>(false);
+    const router = useRouter();
 
     const showAlertDialog = (title: string, content: string) => {
         setAlert({ title, content });
@@ -41,7 +44,16 @@ const AlertDialogProvider = ({ children }: { children: React.ReactNode }) => {
                 </AlertDialogHeader>
 
                 <AlertDialogFooter>
-                    <AlertDialogAction>Entendido</AlertDialogAction>
+                    {
+                        alert?.title == "Inicia sesión" ?
+                            <>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => router.push("/login")}>Iniciar sesión</AlertDialogAction>
+                            </>
+                            :
+                            <AlertDialogAction>Entendido</AlertDialogAction>
+
+                    }
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

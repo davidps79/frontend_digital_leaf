@@ -1,14 +1,11 @@
 'use client';
 import React, { useContext, useState } from 'react'
 import Image from 'next/image'
-import { IconShoppingBag, IconUser, IconBookmarks, IconSearch, IconFilter, IconShoppingCart } from '@tabler/icons-react'
-import FilterMenu from './FilterMenu'
+import { IconUser, IconBookmarks, IconSearch, IconShoppingBag } from '@tabler/icons-react'
 import Link from 'next/link';
-import { getBooksBySearch } from './API/api';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { openCart } from '@/redux/cartSlice';
-import LoginRequiredPopup from './LoginRequiredPopup';
 import { Button } from '@/components/ui/button';
 
 import {
@@ -22,13 +19,11 @@ import {
 } from "@/components/ui/navigation-menu"
 import { ListItem } from './ListItem';
 import { AlertDialogContext } from './AlertDialogProvider';
-import { AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 const categories = ['Fantasía', 'Comedia', 'Cuentos clásicos', 'Ciencia ficción', 'Historia', 'Misterio', 'Romance', 'Horror', 'Thriller']
 
 const Navbar = () => {
     const [search, setSearch] = useState('');
-    const [showLoginPopup, setShowLoginPopup] = useState(false);
     const router = useRouter();
     const token = useAppSelector((state) => state.auth.token);
 
@@ -43,7 +38,7 @@ const Navbar = () => {
 
     const handleOpenCart = () => {
         if (!token) {
-            showAlertDialog("Inicia sesión", "Debes iniciar sesión en una cuenta para acceder al carrito");
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión para acceder al carrito");
         } else {
             dispatch(openCart());
         }
@@ -52,11 +47,12 @@ const Navbar = () => {
 
     const handleProfile = () => {
         if (!token) {
-            setShowLoginPopup(true);
+            showAlertDialog("Inicia sesión", "Debes iniciar sesión para acceder al perfil");
         } else {
             router.push("/profile")
         }
     };
+
     return (
         <div className="z-50 w-full h-[4.5rem]  bg-white flex justify-between px-12 py-4 fixed top-0 left-0">
             <div className='flex gap-10 items-center'>
@@ -127,16 +123,13 @@ const Navbar = () => {
                 </Button>
 
                 <Button variant="ghost" onClick={handleOpenCart}>
-                    <IconShoppingCart />
+                    <IconShoppingBag />
                 </Button>
 
                 <Button variant="ghost" onClick={handleProfile}>
                     <IconUser />
                 </Button>
             </div>
-            {showLoginPopup && (
-                <LoginRequiredPopup onClose={() => setShowLoginPopup(false)} />
-            )}
         </div>
     )
 }
