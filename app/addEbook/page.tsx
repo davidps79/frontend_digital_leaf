@@ -6,6 +6,7 @@ import { uploadEbook } from '@/crudEbok/uploadEbook';
 import { uploadEbookCover } from '../crudImageEbook/uploadEbookCover';
 import { addNewEbook } from '@/redux/authSlice';
 import { InfoEbookDto } from '@/lib/ebook';
+import LogoLoader from '../LogoLoader';
 
 const CreateEbookPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -18,17 +19,21 @@ const CreateEbookPage: React.FC = () => {
     price: '',
     stock: '',
     fileData: null as File | null,
+    numVotes:0,
     isbn: '',
     version: '',
-    rating: '',
+    rating: 0,
     category: '',
     ebookCover: null as File | null,
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) {
       router.push('/login');
+    } else {
+      setLoading(false);
     }
   }, [token, router]);
 
@@ -75,7 +80,8 @@ const CreateEbookPage: React.FC = () => {
         fileUrl: dataEbook.path,
         isbn: formData.isbn,
         version: formData.version,
-        rating: 0,
+        numVotes: formData.numVotes,
+        rating: formData.rating,
         category: formData.category,
         ebookCover: dataCover.path,
       };
@@ -92,6 +98,10 @@ const CreateEbookPage: React.FC = () => {
       }
     }
   };
+
+  if (loading) {
+    return <LogoLoader />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">

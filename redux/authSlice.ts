@@ -31,7 +31,7 @@ interface AuthState {
 const initialState: AuthState = {
   token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
   user: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || 'null') : null,
-  profile: null,
+  profile:  typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('profile') || 'null') : null,
   status: 'idle',
   cart: [],
   error: null,
@@ -40,13 +40,22 @@ const initialState: AuthState = {
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }: { email: string; password: string }) => {
+
+
     const response = await login(email, password);
+
+
     localStorage.setItem('token', response.access_token);
+
     const decodedToken: any = jwtDecode(response.access_token);
     const userId = decodedToken.sub;
     const user = await getUserById(userId, response.access_token);
     localStorage.setItem('user', JSON.stringify(user));
-    return { token: response.access_token, user };
+
+    const profile = await getAuthorProfile(userId);
+    localStorage.setItem('profile', JSON.stringify(profile));
+
+    return { token: response.access_token, user, profile };
   }
 );
 
@@ -67,7 +76,11 @@ export const registerUser = createAsyncThunk(
     const userId = decodedToken.sub;
     const user = await getUserById(userId, response.access_token);
     localStorage.setItem('user', JSON.stringify(user));
-    return { token: response.access_token, user };
+
+    const profile = await getAuthorProfile(userId);
+    localStorage.setItem('profile', JSON.stringify(profile));
+
+    return { token: response.access_token, user, profile };
   }
 );
 
@@ -185,11 +198,12 @@ const authSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User }>) => {
+      .addCase(loginUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User; profile: Profile }>) => {
         state.status = 'succeeded';
         state.token = action.payload.token;
         state.user = action.payload.user;
         state.error = null;
+        state.profile = action.payload.profile;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'failed';
@@ -198,11 +212,12 @@ const authSlice = createSlice({
       .addCase(registerUser.pending, (state) => {
         state.status = 'loading';
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User }>) => {
+      .addCase(registerUser.fulfilled, (state, action: PayloadAction<{ token: string; user: User; profile: Profile }>) => {
         state.status = 'succeeded';
         state.token = action.payload.token;
         state.user = action.payload.user;
         state.error = null;
+        state.profile = action.payload.profile;
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.status = 'failed';

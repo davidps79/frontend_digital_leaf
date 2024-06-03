@@ -7,6 +7,7 @@ import { uploadEbookCover } from '@/app/crudImageEbook/uploadEbookCover';
 import { addNewEbook } from '@/redux/authSlice';
 import { updateEbook, getBookById } from '@/app/API/api';
 import { InfoEbookDto } from '@/lib/ebook';
+import LogoLoader from '@/app/LogoLoader';
 
 const BookForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,29 +28,44 @@ const BookForm: React.FC = () => {
     ebookCover: null as File | null,
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+    const user = useAppSelector((state) => state.auth.user) || (typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('user') || '{}') : null);
+  
+
 
   useEffect(() => {
-    if (!token) {
-      router.push('/login');
-    } else if (id) {
-      const fetchEbook = async () =>{
-        const ebookData = await getBookById(id);
-        setFormData({
-          title: ebookData.title,
-          publisher: ebookData.publisher,
-          overview: ebookData.overview,
-          price: ebookData.price,
-          stock: ebookData.stock,
-          fileData: null,
-          isbn: ebookData.isbn,
-          version: ebookData.version,
-          rating: ebookData.rating,
-          category: ebookData.category,
-          ebookCover: null,
-        });
+    const fetchData = async () => {
+      if (token) {
+        if (user.role === "Admin") {
+          try {
+            const ebookData = await getBookById(id);
+            setFormData({
+              title: ebookData.title,
+              publisher: ebookData.publisher,
+              overview: ebookData.overview,
+              price: ebookData.price,
+              stock: ebookData.stock,
+              fileData: null,
+              isbn: ebookData.isbn,
+              version: ebookData.version,
+              rating: ebookData.rating,
+              category: ebookData.category,
+              ebookCover: null,
+            });
+            
+          } catch (err) {
+            setError('Error fetching ebook data');
+          }
+        }else{
+          router.push('/');
+        }
+      } else {
+        router.push('/login');
       }
-      fetchEbook();
-    }
+      setLoading(false);
+    };
+
+    fetchData();
   }, [token, router, id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -85,20 +101,20 @@ const BookForm: React.FC = () => {
       const dataCover = formData.ebookCover ? await uploadEbookCover(formData.ebookCover) : null;
 
       const ebookData: InfoEbookDto = {
-          id: id || '',
-          title: formData.title,
-          publisher: formData.publisher,
-          author: { id: '', name: '' }, // Asignar los valores reales del autor
-          overview: formData.overview,
-          price: parseFloat(formData.price) || 0,
-          stock: parseInt(formData.stock) || 0,
-          fileUrl: dataEbook ? dataEbook.path : '',
-          isbn: formData.isbn || '',
-          version: formData.version || '',
-          rating: parseInt(formData.rating) || 0,
-          category: formData.category || '',
-          ebookCover: dataCover ? dataCover.path : '',
-          numVotes: 0
+        id: id || '',
+        title: formData.title,
+        publisher: formData.publisher,
+        author: { id: '', name: '' }, // Asignar los valores reales del autor
+        overview: formData.overview,
+        price: parseFloat(formData.price) || 0,
+        stock: parseInt(formData.stock) || 0,
+        fileUrl: dataEbook ? dataEbook.path : '',
+        isbn: formData.isbn || '',
+        version: formData.version || '',
+        rating: parseInt(formData.rating) || 0,
+        category: formData.category || '',
+        ebookCover: dataCover ? dataCover.path : '',
+        numVotes: 0
       };
 
       if (id) {
@@ -110,7 +126,7 @@ const BookForm: React.FC = () => {
       router.push('/admin/dashboard');
     } catch (err: any) {
       if (err === 'Unauthorized') {
-        router.push('/login');
+        router.push('/');
       } else if (err.message === 'The resource already exists') {
         setError('An ebook with this title already exists. Please choose a different title.');
       } else {
@@ -118,6 +134,10 @@ const BookForm: React.FC = () => {
       }
     }
   };
+
+  if (loading) {
+    return <LogoLoader />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
